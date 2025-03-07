@@ -7,6 +7,10 @@
 @theme {
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  --color-black-100: #1c1c1c;
+  --color-black-40: rgba(28, 28, 28, 0.4);
+  --color-black-5: rgba(28, 28, 28, 0.05);
 }
 
 :root {
@@ -125,5 +129,8 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+  section {
+    @apply h-screen w-full overflow-y-auto;
   }
 }
