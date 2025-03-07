@@ -2,6 +2,11 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 
+export const metadata = {
+  title: "Not Found",
+  description: "Not Found",
+};
+
 export default function NotFound() {
   return (
     <section className="flex min-h-screen w-full items-center justify-center p-4">
@@ -10,12 +15,12 @@ export default function NotFound() {
           <h1 className="text-black-100 mb-2 text-3xl font-semibold sm:text-4xl md:text-5xl">
             404 Not Found
           </h1>
-          <p className="text-xs font-normal sm:text-sm">
+          <p className="text-black-40 text-xs font-normal sm:text-sm">
             Sorry, we can't find that page.
           </p>
           <Image
             src="/pics/404.svg"
-            alt="not-found"
+            alt="not-found image"
             width={347}
             height={394}
             className="my-6 h-auto w-full max-w-[250px] sm:my-8 sm:max-w-[300px] md:my-10 md:max-w-[347px]"
