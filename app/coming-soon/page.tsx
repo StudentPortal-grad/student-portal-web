@@ -1,7 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import CountdownTimer from "@/components/CountdownTimer";
-
+import NewsTellerForm from "@/components/forms/NewsTellerForm";
 export const metadata = {
   title: "coming soon",
 };
@@ -25,6 +25,7 @@ export default function page() {
           priority
         />
         <CountdownTimer targetDate={targetDate} />
+        <NewsTellerForm />
       </div>
     </section>
   );
