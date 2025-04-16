@@ -15,8 +15,14 @@
   --color-black-20: rgba(28, 28, 28, 0.2);
   --color-black-10: rgba(28, 28, 28, 0.1);
   --color-black-5: rgba(28, 28, 28, 0.05);
+  --color-black-brand: #1c1c1c;
 
   --color-secondary-purple-a: #95a4fc;
+  --color-secondary-purple-b: #667aff;
+  --color-secondary-purple-c: #3c50d3;
+  --color-secondary-purple-d: #2536a2;
+
+  --color-primary-light: #f7f9fb;
 }
 
 :root {
@@ -137,6 +143,6 @@
     @apply bg-background text-foreground;
   }
   section {
-    @apply h-screen w-full overflow-y-auto;
+    @apply bg-primary-light h-screen w-full overflow-y-auto;
   }
 }
