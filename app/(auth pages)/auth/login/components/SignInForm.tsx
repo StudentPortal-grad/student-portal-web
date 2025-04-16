@@ -25,9 +25,9 @@ export default function SignInForm() {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="mx-4 my-12 w-full max-w-[400px] sm:mx-10 sm:my-[107px]"
+      className="mx-4 w-full max-w-[400px] sm:mx-10"
     >
-      <div className="flex flex-col items-center gap-4 sm:gap-7">
+      <div className="flex flex-col items-center gap-5 sm:gap-7">
         <FormHeader />
         <div className="flex w-full items-center gap-3 sm:flex-row sm:gap-4">
           <AuthProviderButton provider="google" />
@@ -52,7 +52,7 @@ export default function SignInForm() {
               <p className="text-xs text-red-500">{errors.email.message}</p>
             )}
           </div>
-          <div className="flex flex-col gap-1.5 sm:gap-2">
+          <div className="flex flex-col gap-2">
             <Input
               type="password"
               placeholder="Password"

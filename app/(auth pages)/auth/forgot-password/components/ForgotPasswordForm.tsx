@@ -1,0 +1,79 @@
+"use client";
+import { Separator } from "@/components/ui/separator";
+import { useForm } from "react-hook-form";
+import React from "react";
+import { Input } from "@/components/ui/input";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+interface FormData {
+  email: string;
+  password: string;
+}
+
+export default function ForgotPasswordForm() {
+  const router = useRouter();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormData>();
+
+  const onSubmit = (data: FormData) => {
+    console.log(data);
+  };
+
+  return (
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="mx-4 w-full max-w-[400px] sm:mx-10"
+    >
+      <div className="flex flex-col items-center gap-5 sm:gap-7">
+        <FormHeader />
+        <div className="flex w-full flex-col gap-3 sm:gap-4">
+          <div className="flex flex-col gap-1.5 sm:gap-2">
+            <Input
+              type="email"
+              placeholder="Please enter your email address"
+              className="h-9 sm:h-10"
+              {...register("email", {
+                required: "Email is required",
+                pattern: {
+                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                  message: "Invalid email address",
+                },
+              })}
+            />
+            {errors.email && (
+              <p className="text-xs text-red-500">{errors.email.message}</p>
+            )}
+          </div>
+        </div>
+        <div className="flex w-full flex-col items-center gap-3 sm:gap-4">
+          <button className="bg-black-brand w-full cursor-pointer rounded-[8px] px-4 py-1.5 text-base font-semibold text-white capitalize sm:py-2 sm:text-lg">
+            Submit
+          </button>
+          <button
+            type="button"
+            className="text-secondary-purple-a hover:text-secondary-purple-b w-fit cursor-pointer text-center text-sm font-normal transition-colors duration-300 sm:text-sm"
+            onClick={() => router.back()}
+          >
+            Back
+          </button>
+        </div>
+      </div>
+    </form>
+  );
+}
+
+function FormHeader() {
+  return (
+    <div className="flex flex-col gap-1.5 text-center capitalize sm:gap-2">
+      <h1 className="text-black-100 text-xl font-semibold sm:text-2xl">
+        Forgot Password ?
+      </h1>
+      <p className="text-black-40 text-xs font-normal sm:text-sm">
+        Enter your email to reset your password.
+      </p>
+    </div>
+  );
+}
