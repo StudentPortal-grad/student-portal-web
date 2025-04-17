@@ -99,7 +99,10 @@ function FormHeader() {
 
 function AuthProviderButton({ provider }: { provider: string }) {
   return (
-    <button className="bg-white-100 border-black-10 flex w-full cursor-pointer items-center justify-center gap-2 rounded-[8px] border-[1px] px-3 py-1.5 sm:w-auto sm:py-[6px]">
+    <button
+      type="button"
+      className="bg-white-100 border-black-10 flex w-full cursor-pointer items-center justify-center gap-2 rounded-[8px] border-[1px] px-3 py-1.5 sm:w-auto sm:py-[6px]"
+    >
       <Image
         src={`/icons/${provider}.svg`}
         alt={provider}
