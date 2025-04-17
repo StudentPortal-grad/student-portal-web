@@ -151,6 +151,6 @@
   }
 
   .form-button {
-    @apply bg-black-brand w-full cursor-pointer rounded-[8px] px-4 py-1.5 text-base font-semibold text-white capitalize sm:py-2 sm:text-lg;
+    @apply bg-black-brand w-full cursor-pointer rounded-[8px] px-4 py-1.5 text-base font-semibold text-white capitalize disabled:cursor-not-allowed disabled:opacity-50 sm:py-2 sm:text-lg;
   }
 }
