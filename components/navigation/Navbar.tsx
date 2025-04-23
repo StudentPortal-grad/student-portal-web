@@ -3,6 +3,7 @@ import React from "react";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import ThemeButton from "../buttons/ThemeButton";
+import TooltipWrapper from "../TooltipWrapper";
 
 export default function Navbar({
   sidebarOpen,
@@ -46,28 +47,32 @@ export default function Navbar({
         {/* controls */}
         <div className="flex items-center gap-2">
           <ThemeButton />
-          <div
-            className={`flex-center hover:bg-black-5 cursor-pointer rounded-full p-2 transition-colors duration-300 ${notificationsOpen ? "bg-black-5" : ""}`}
-            onClick={() => setNotificationsOpen((prev) => !prev)}
-          >
-            <Image
-              src="/icons/notifications.svg"
-              alt="notification menu toggle"
-              width={20}
-              height={20}
-            />
-          </div>
-          <div
-            className={`flex-center hover:bg-black-5 cursor-pointer rounded-full p-2 transition-colors duration-300 ${sidebarOpen ? "bg-black-5" : ""}`}
-            onClick={() => setSidebarOpen((prev) => !prev)}
-          >
-            <Image
-              src="/icons/sidebar.svg"
-              alt="sidebar toggle"
-              width={20}
-              height={20}
-            />
-          </div>
+          <TooltipWrapper content="Notifications">
+            <div
+              className={`flex-center hover:bg-black-5 cursor-pointer rounded-full p-2 transition-colors duration-300 ${notificationsOpen ? "bg-black-5" : ""}`}
+              onClick={() => setNotificationsOpen((prev) => !prev)}
+            >
+              <Image
+                src="/icons/notifications.svg"
+                alt="notification menu toggle"
+                width={20}
+                height={20}
+              />
+            </div>
+          </TooltipWrapper>
+          <TooltipWrapper content="Sidebar">
+            <div
+              className={`flex-center hover:bg-black-5 cursor-pointer rounded-full p-2 transition-colors duration-300 ${sidebarOpen ? "bg-black-5" : ""}`}
+              onClick={() => setSidebarOpen((prev) => !prev)}
+            >
+              <Image
+                src="/icons/sidebar.svg"
+                alt="sidebar toggle"
+                width={20}
+                height={20}
+              />
+            </div>
+          </TooltipWrapper>
         </div>
       </div>
     </header>
