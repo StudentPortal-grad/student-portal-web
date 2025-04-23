@@ -146,11 +146,30 @@
     @apply bg-primary-light h-screen w-full overflow-y-auto;
   }
 
+  main {
+    @apply overflow-y-auto;
+  }
+
+  .layout {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+  }
+
+  .main-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+  }
+
   .link {
     @apply text-secondary-purple-a hover:text-secondary-purple-b cursor-pointer text-right text-xs font-normal transition-colors duration-300 sm:text-sm;
   }
 
   .form-button {
     @apply bg-black-brand w-full cursor-pointer rounded-[8px] px-4 py-1.5 text-base font-semibold text-white capitalize disabled:cursor-not-allowed disabled:opacity-50 sm:py-2 sm:text-lg;
+  }
+
+  .flex-center {
+    @apply flex items-center justify-center;
   }
 }
