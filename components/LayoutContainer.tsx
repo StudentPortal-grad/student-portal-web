@@ -14,6 +14,7 @@ export default function LayoutContainer({
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
 
+  // Toggle notifications panel with Ctrl+K
   useEffect(() => {
     const cleanup = useKeyboardShortcut({ key: "k", ctrl: true }, () => {
       setNotificationsOpen((prev) => !prev);
@@ -21,6 +22,7 @@ export default function LayoutContainer({
     return cleanup;
   }, []);
 
+  // Toggle sidebar with Ctrl+E
   useEffect(() => {
     const cleanup = useKeyboardShortcut({ key: "E", ctrl: true }, () => {
       setSidebarOpen((prev) => !prev);
