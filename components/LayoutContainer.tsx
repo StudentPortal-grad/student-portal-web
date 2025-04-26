@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import SideBar from "./navigation/SideBar";
 import Navbar from "./navigation/Navbar";
 import Notifications from "./navigation/Notifications";
+import { useKeyboardShortcut } from "@/lib/utils";
 
 export default function LayoutContainer({
   children,
@@ -12,6 +13,20 @@ export default function LayoutContainer({
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
+
+  useEffect(() => {
+    const cleanup = useKeyboardShortcut({ key: "k", ctrl: true }, () => {
+      setNotificationsOpen((prev) => !prev);
+    });
+    return cleanup;
+  }, []);
+
+  useEffect(() => {
+    const cleanup = useKeyboardShortcut({ key: "E", ctrl: true }, () => {
+      setSidebarOpen((prev) => !prev);
+    });
+    return cleanup;
+  }, []);
   return (
     <>
       <SideBar open={sidebarOpen} />

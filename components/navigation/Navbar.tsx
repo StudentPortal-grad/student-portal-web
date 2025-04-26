@@ -47,7 +47,7 @@ export default function Navbar({
         {/* controls */}
         <div className="flex items-center gap-2">
           <ThemeButton />
-          <TooltipWrapper content="Notifications">
+          <TooltipWrapper content="Notifications: ctrl + K">
             <div
               className={`flex-center hover:bg-black-5 cursor-pointer rounded-full p-2 transition-colors duration-300 ${notificationsOpen ? "bg-black-5" : ""}`}
               onClick={() => setNotificationsOpen((prev) => !prev)}
@@ -60,7 +60,7 @@ export default function Navbar({
               />
             </div>
           </TooltipWrapper>
-          <TooltipWrapper content="Sidebar">
+          <TooltipWrapper content="Sidebar: ctrl + E">
             <div
               className={`flex-center hover:bg-black-5 cursor-pointer rounded-full p-2 transition-colors duration-300 ${sidebarOpen ? "bg-black-5" : ""}`}
               onClick={() => setSidebarOpen((prev) => !prev)}
