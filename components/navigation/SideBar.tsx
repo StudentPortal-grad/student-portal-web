@@ -17,36 +17,49 @@ export default function SideBar({ open = true }: { open: boolean }) {
       name: "overview",
       shortcut: "O",
       path: "/overview",
+      acceptedPaths: ["/overview"],
       icon: "/icons/overview.svg",
+    },
+    {
+      name: "Users",
+      shortcut: "U",
+      path: "/users",
+      acceptedPaths: ["/users"],
+      icon: "/icons/users.svg",
     },
     {
       name: "Communities",
       shortcut: "C",
       path: "/communities",
+      acceptedPaths: ["/communities"],
       icon: "/icons/communities.svg",
     },
     {
       name: "Resources",
       shortcut: "R",
       path: "/resources",
+      acceptedPaths: ["/resources"],
       icon: "/icons/resources.svg",
     },
     {
       name: "Events",
       shortcut: "E",
       path: "/events",
+      acceptedPaths: ["/events"],
       icon: "/icons/events.svg",
     },
     {
       name: "AI",
       shortcut: "A",
       path: "/ai",
+      acceptedPaths: ["/ai"],
       icon: "/icons/ai.svg",
     },
     {
       name: "Settings",
       shortcut: "S",
       path: "/settings/overview",
+      acceptedPaths: ["/settings/overview", "/settings/logs"],
       icon: "/icons/settings.svg",
     },
   ];
@@ -56,6 +69,13 @@ export default function SideBar({ open = true }: { open: boolean }) {
   useEffect(() => {
     const cleanup = useKeyboardShortcut({ key: "O", alt: true }, () => {
       router.push("/overview");
+    });
+    return cleanup;
+  }, []);
+
+  useEffect(() => {
+    const cleanup = useKeyboardShortcut({ key: "U", alt: true }, () => {
+      router.push("/users");
     });
     return cleanup;
   }, []);
@@ -120,7 +140,7 @@ export default function SideBar({ open = true }: { open: boolean }) {
           >
             <Link
               href={page.path}
-              className={`hover:bg-black-5 flex items-center gap-3 rounded-[8px] p-3 transition-colors duration-300 ${pathname === page.path ? "bg-black-5" : ""}`}
+              className={`hover:bg-black-5 flex items-center gap-3 rounded-[8px] p-3 transition-colors duration-300 ${page.acceptedPaths.includes(pathname) ? "bg-black-5" : ""}`}
             >
               <Image src={page.icon} alt={page.name} width={24} height={24} />
               {open ? (
