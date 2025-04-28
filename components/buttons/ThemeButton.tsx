@@ -1,8 +1,9 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import Image from "next/image";
 import TooltipWrapper from "../TooltipWrapper";
+import { useKeyboardShortcut } from "@/lib/utils";
 
 export default function ThemeButton() {
   const [theme, setTheme] = React.useState<"light" | "dark" | "system">(
@@ -23,8 +24,15 @@ export default function ThemeButton() {
     });
   };
 
+  useEffect(() => {
+    const cleanup = useKeyboardShortcut({ key: "T", alt: true }, () => {
+      handleThemeClick();
+    });
+    return cleanup;
+  }, []);
+
   return (
-    <TooltipWrapper content={`Theme: ${theme}`}>
+    <TooltipWrapper content={`Theme: ${theme} (alt + T)`}>
       <div
         className={`flex-center hover:bg-black-5 cursor-pointer rounded-full p-2 transition-colors duration-300`}
         onClick={handleThemeClick}

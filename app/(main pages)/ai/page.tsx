@@ -4,7 +4,7 @@ import ModelRetraining from "@/components/forms/ModelRetraining";
 
 export default function page() {
   return (
-    <section className="flex flex-col gap-7 p-7">
+    <section className="flex flex-col gap-7 bg-white p-7">
       <Image
         src="/pics/ai-panner.svg"
         alt="ai panner"
