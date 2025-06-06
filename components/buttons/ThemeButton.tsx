@@ -4,6 +4,7 @@ import React, { useEffect } from "react";
 import Image from "next/image";
 import TooltipWrapper from "../TooltipWrapper";
 import { useKeyboardShortcut } from "@/lib/utils";
+import { useShortcut } from "@/lib/hooks/useShortcut";
 
 export default function ThemeButton() {
   const [theme, setTheme] = React.useState<"light" | "dark" | "system">(
@@ -24,12 +25,11 @@ export default function ThemeButton() {
     });
   };
 
-  useEffect(() => {
-    const cleanup = useKeyboardShortcut({ key: "T", alt: true }, () => {
-      handleThemeClick();
-    });
-    return cleanup;
-  }, []);
+  useShortcut({
+    key: "T",
+    alt: true,
+    callback: handleThemeClick,
+  });
 
   return (
     <TooltipWrapper content={`Theme: ${theme} (alt + T)`}>

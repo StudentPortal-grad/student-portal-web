@@ -18,6 +18,7 @@ export default function Navbar({
 }) {
   const pathname = usePathname();
   const pathSegments = pathname.split("/").filter(Boolean);
+
   return (
     <header className="border-black-10 sticky top-0 z-10 border-b-1 bg-white px-7 py-5.5">
       {/* Breadcrumb */}

@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { useRouter } from "next/navigation";
-import UserForm, { UserFormData } from "../../components/UserForm";
+import UserForm, { UserFormData } from "../../../../components/UserForm";
 
 const mockUser: UserFormData = {
   firstName: "Kate",
@@ -12,10 +12,10 @@ const mockUser: UserFormData = {
   avatarUrl: "https://randomuser.me/api/portraits/women/1.jpg",
 };
 
-export default function EditUserPage() {
+export default function EditUserModal() {
   const router = useRouter();
   return (
-    <div className="flex items-start justify-center bg-white p-7">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
       <UserForm
         mode="edit"
         user={mockUser}

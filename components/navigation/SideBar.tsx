@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React from "react";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import TooltipWrapper from "../TooltipWrapper";
 import LogoutButton from "../buttons/LogoutButton";
-import { useKeyboardShortcut } from "@/lib/utils";
+import { useShortcut } from "@/lib/hooks/useShortcut";
 
 export default function SideBar({ open = true }: { open: boolean }) {
   const pathname = usePathname();
@@ -66,54 +66,53 @@ export default function SideBar({ open = true }: { open: boolean }) {
 
   const router = useRouter();
 
-  useEffect(() => {
-    const cleanup = useKeyboardShortcut({ key: "O", alt: true }, () => {
-      router.push("/overview");
-    });
-    return cleanup;
-  }, []);
+  useShortcut({
+    key: "O",
+    alt: true,
+    callback: () => router.push("/overview"),
+  });
 
-  useEffect(() => {
-    const cleanup = useKeyboardShortcut({ key: "U", alt: true }, () => {
-      router.push("/users");
-    });
-    return cleanup;
-  }, []);
+  useShortcut({
+    key: "C",
+    alt: true,
+    callback: () => router.push("/communities"),
+  });
 
-  useEffect(() => {
-    const cleanup = useKeyboardShortcut({ key: "C", alt: true }, () => {
-      router.push("/communities");
-    });
-    return cleanup;
-  }, []);
+  useShortcut({
+    key: "R",
+    alt: true,
+    callback: () => router.push("/resources"),
+  });
 
-  useEffect(() => {
-    const cleanup = useKeyboardShortcut({ key: "R", alt: true }, () => {
-      router.push("/resources");
-    });
-    return cleanup;
-  }, []);
+  useShortcut({
+    key: "E",
+    alt: true,
+    callback: () => router.push("/events"),
+  });
 
-  useEffect(() => {
-    const cleanup = useKeyboardShortcut({ key: "E", alt: true }, () => {
-      router.push("/events");
-    });
-    return cleanup;
-  }, []);
+  useShortcut({
+    key: "A",
+    alt: true,
+    callback: () => router.push("/ai"),
+  });
 
-  useEffect(() => {
-    const cleanup = useKeyboardShortcut({ key: "A", alt: true }, () => {
-      router.push("/ai");
-    });
-    return cleanup;
-  }, []);
+  useShortcut({
+    key: "S",
+    alt: true,
+    callback: () => router.push("/settings/overview"),
+  });
 
-  useEffect(() => {
-    const cleanup = useKeyboardShortcut({ key: "S", alt: true }, () => {
-      router.push("/settings/overview");
-    });
-    return cleanup;
-  }, []);
+  useShortcut({
+    key: "E",
+    alt: true,
+    callback: () => router.push("/events"),
+  });
+
+  useShortcut({
+    key: "S",
+    alt: true,
+    callback: () => router.push("/settings/overview"),
+  });
 
   return (
     <nav className="border-black-10 flex flex-col border-r-1 px-4 py-7">

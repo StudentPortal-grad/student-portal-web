@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { useRouter } from "next/navigation";
-import UserForm, { UserFormData } from "../../components/UserForm";
+import UserForm, { UserFormData } from "../../../../components/UserForm";
 
 const mockUser: UserFormData = {
   firstName: "Kate",
@@ -9,13 +9,13 @@ const mockUser: UserFormData = {
   email: "test@test.com",
   dateOfBirth: "February 24th, 2002",
   role: "Admin",
-  avatarUrl: "https://randomuser.me/api/portraits/women/1.jpg",
+  avatarUrl: "https://randomuser.me/api/portraits/women/4.jpg",
 };
 
-export default function ViewUserPage() {
+export default function ViewUserModal() {
   const router = useRouter();
   return (
-    <div className="flex items-start justify-center bg-white p-7">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
       <UserForm mode="view" user={mockUser} onCancel={() => router.back()} />
     </div>
   );

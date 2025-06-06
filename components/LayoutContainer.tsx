@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import SideBar from "./navigation/SideBar";
 import Navbar from "./navigation/Navbar";
 import Notifications from "./navigation/Notifications";
-import { useKeyboardShortcut } from "@/lib/utils";
+import { useShortcut } from "@/lib/hooks/useShortcut";
 
 export default function LayoutContainer({
   children,
@@ -15,20 +15,19 @@ export default function LayoutContainer({
   const [notificationsOpen, setNotificationsOpen] = useState(false);
 
   // Toggle notifications panel with Ctrl+K
-  useEffect(() => {
-    const cleanup = useKeyboardShortcut({ key: "N", alt: true }, () => {
-      setNotificationsOpen((prev) => !prev);
-    });
-    return cleanup;
-  }, []);
+  useShortcut({
+    key: "N",
+    alt: true,
+    callback: () => setNotificationsOpen((prev) => !prev),
+  });
 
   // Toggle sidebar with Ctrl+E
-  useEffect(() => {
-    const cleanup = useKeyboardShortcut({ key: "B", alt: true }, () => {
-      setSidebarOpen((prev) => !prev);
-    });
-    return cleanup;
-  }, []);
+  useShortcut({
+    key: "B",
+    alt: true,
+    callback: () => setSidebarOpen((prev) => !prev),
+  });
+
   return (
     <>
       <SideBar open={sidebarOpen} />
