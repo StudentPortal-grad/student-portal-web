@@ -1,9 +1,9 @@
 "use client";
 import React from "react";
 import { useRouter } from "next/navigation";
-import EventForm, { EventFormData } from "../../components/EventForm";
+import ResourceForm, { ResourceFormData } from "../../components/ResourceForm";
 
-const mockEvent: EventFormData = {
+const mockResource: ResourceFormData = {
   title: "Graduation Ceremony 2025",
   description: "A special event for all graduates.",
   tags: "graduation,2025,ceremony",
@@ -16,10 +16,10 @@ export default function EditEventModal() {
   const router = useRouter();
   return (
     <section className="flex items-start justify-center bg-white p-7">
-      <EventForm
+      <ResourceForm
         mode="edit"
-        event={mockEvent}
-        onSave={(data: EventFormData) => {
+        resource={mockResource}
+        onSave={(data: ResourceFormData) => {
           console.log("Saved event:", data);
           router.back();
         }}

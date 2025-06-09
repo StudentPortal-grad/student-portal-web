@@ -1,11 +1,10 @@
 import React from "react";
 import ResourcesTable from "./components/ResourcesTable";
-import FilterBar from "./components/FilterBar";
 
 export default function page() {
   return (
-    <section className="flex flex-col bg-white p-7">
-      <h1 className="mb-1 text-lg font-bold">Resources</h1>
+    <section className="flex flex-col gap-4 bg-white p-7">
+      <h1 className="mb-4 text-lg font-bold">Events</h1>
       <ResourcesTable />
     </section>
   );
