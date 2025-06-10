@@ -45,7 +45,7 @@ export default function SideBar({ open = true }: { open: boolean }) {
       name: "Events",
       shortcut: "E",
       path: "/events",
-      acceptedPaths: ["/events"],
+      acceptedPaths: ["/events", "/events/calendar"],
       icon: "/icons/events.svg",
     },
     {
