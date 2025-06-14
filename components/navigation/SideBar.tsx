@@ -35,6 +35,13 @@ export default function SideBar({ open = true }: { open: boolean }) {
       icon: "/icons/communities.svg",
     },
     {
+      name: "Posts",
+      shortcut: "P",
+      path: "/posts",
+      acceptedPaths: ["/posts"],
+      icon: "/icons/comments.svg",
+    },
+    {
       name: "Resources",
       shortcut: "R",
       path: "/resources",
@@ -109,9 +116,9 @@ export default function SideBar({ open = true }: { open: boolean }) {
   });
 
   useShortcut({
-    key: "S",
+    key: "P",
     alt: true,
-    callback: () => router.push("/settings/overview"),
+    callback: () => router.push("/posts"),
   });
 
   return (
