@@ -1,13 +1,13 @@
+import { logout } from "@/lib/actions/logout";
 import Image from "next/image";
 import React from "react";
 
 export default function LogoutButton({ open }: { open: boolean }) {
   return (
     <div
-      className="group hover:bg-black-5 flex w-full items-center gap-3 rounded-[8px] p-3 transition-colors"
-      onClick={() => {
-        // TODO: Implement logout functionality
-        console.log("Logout clicked");
+      className="group hover:bg-black-5 flex w-full cursor-pointer items-center gap-3 rounded-[8px] p-3 transition-colors"
+      onClick={async () => {
+        await logout();
       }}
     >
       <Image

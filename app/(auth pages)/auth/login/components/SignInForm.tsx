@@ -2,9 +2,13 @@
 import { Separator } from "@/components/ui/separator";
 import { useForm } from "react-hook-form";
 import Image from "next/image";
-import React from "react";
+import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
+import { login } from "@/lib/actions/login";
+import { AlertCircle, CheckCircle } from "lucide-react";
+import { Loader2 } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 interface FormData {
   email: string;
@@ -12,14 +16,35 @@ interface FormData {
 }
 
 export default function SignInForm() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [loginError, setLoginError] = useState<string | null>(null);
+  const [loginSuccess, setLoginSuccess] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<FormData>();
 
-  const onSubmit = (data: FormData) => {
-    console.log(data);
+  const onSubmit = async (data: FormData) => {
+    setLoginError(null);
+    setIsLoading(true);
+    try {
+      const result = await login(data.email, data.password);
+      if (result?.error) {
+        setLoginError(result.error);
+      } else {
+        setLoginSuccess(true);
+
+        setTimeout(() => {
+          const callbackUrl = searchParams.get("callbackUrl");
+          router.push(callbackUrl || "/overview");
+        }, 1000);
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -29,9 +54,21 @@ export default function SignInForm() {
     >
       <div className="flex flex-col items-center gap-5 sm:gap-7">
         <FormHeader />
+        {loginSuccess && (
+          <div className="flex w-full items-center gap-2 rounded-lg border border-green-200 bg-green-50 p-3">
+            <CheckCircle className="h-5 w-5 flex-shrink-0 text-green-500" />
+            <p className="text-sm text-green-600">Logged in successfully</p>
+          </div>
+        )}
+        {loginError && (
+          <div className="flex w-full items-center gap-2 rounded-lg border border-red-200 bg-red-50 p-3">
+            <AlertCircle className="h-5 w-5 flex-shrink-0 text-red-500" />
+            <p className="text-sm text-red-600">{loginError}</p>
+          </div>
+        )}
         <div className="flex w-full items-center gap-3 sm:flex-row sm:gap-4">
-          <AuthProviderButton provider="google" />
-          <AuthProviderButton provider="microsoft" />
+          <AuthProviderButton provider="google" disabled={isLoading} />
+          <AuthProviderButton provider="microsoft" disabled={isLoading} />
         </div>
         <FormSeparator />
         <div className="flex w-full flex-col gap-3 sm:gap-4">
@@ -39,7 +76,8 @@ export default function SignInForm() {
             <Input
               type="email"
               placeholder="Email"
-              className="h-9 sm:h-10"
+              className={`h-9 sm:h-10 ${loginSuccess ? "border-green-500 focus-visible:ring-green-500" : ""} ${loginError?.toLowerCase().includes("invalid email or password") ? "border-red-500 focus-visible:ring-red-500" : ""}`}
+              disabled={isLoading}
               {...register("email", {
                 required: "Email is required",
                 pattern: {
@@ -56,7 +94,8 @@ export default function SignInForm() {
             <Input
               type="password"
               placeholder="Password"
-              className="h-9 sm:h-10"
+              className={`h-9 sm:h-10 ${loginSuccess ? "border-green-500 focus-visible:ring-green-500" : ""} ${loginError?.toLowerCase().includes("invalid email or password") ? "border-red-500 focus-visible:ring-red-500" : ""}`}
+              disabled={isLoading}
               {...register("password", {
                 required: "Password is required",
                 minLength: {
@@ -76,7 +115,11 @@ export default function SignInForm() {
             </Link>
           </div>
         </div>
-        <button className="bg-black-brand w-full cursor-pointer rounded-[8px] px-4 py-1.5 text-base font-semibold text-white capitalize sm:py-2 sm:text-lg">
+        <button
+          disabled={isLoading}
+          className="bg-black-brand flex w-full cursor-pointer items-center justify-center gap-2 rounded-[8px] px-4 py-1.5 text-base font-semibold text-white capitalize disabled:cursor-not-allowed disabled:opacity-50 sm:py-2 sm:text-lg"
+        >
+          {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
           Sign In
         </button>
       </div>
@@ -97,11 +140,18 @@ function FormHeader() {
   );
 }
 
-function AuthProviderButton({ provider }: { provider: string }) {
+function AuthProviderButton({
+  provider,
+  disabled,
+}: {
+  provider: string;
+  disabled?: boolean;
+}) {
   return (
     <button
       type="button"
-      className="bg-white-100 border-black-10 flex w-full cursor-pointer items-center justify-center gap-2 rounded-[8px] border-[1px] px-3 py-1.5 sm:w-auto sm:py-[6px]"
+      disabled={disabled}
+      className="bg-white-100 border-black-10 flex w-full cursor-pointer items-center justify-center gap-2 rounded-[8px] border-[1px] px-3 py-1.5 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto sm:py-[6px]"
     >
       <Image
         src={`/icons/${provider}.svg`}
