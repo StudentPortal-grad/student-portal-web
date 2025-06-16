@@ -1,36 +1,91 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Student Portal Web Application
 
-## Getting Started
+A modern web application built with Next.js 13+ with React 19 for managing student information and services.
 
-First, run the development server:
+## Installation
+
+1. Clone the repository:
+
+```bash
+git clone [repository-url]
+cd student-portal-web
+```
+
+2. Install dependencies:
+
+```bash
+npm install --force
+
+or
+
+npm install --legacy-peer-deps
+```
+
+3. Run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+4. Open [http://localhost:3000](http://localhost:3000) in your browser
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+student-portal-web/
+├── app/                      # Main application directory (Next.js 13+ App Router)
+│   ├── api/                  # API routes and endpoints
+│   ├── (auth pages)/        # Authentication related pages
+│   ├── (main pages)/        # Main application pages
+│   ├── components/          # Page-specific components
+│   ├── coming-soon/         # Coming soon page
+│   ├── maintenece/          # Maintenance page
+│   ├── globals.css          # Global styles
+│   ├── layout.tsx           # Root layout component
+│   ├── error.tsx            # Error page component
+│   └── not-found.tsx        # 404 page component
+│
+├── components/              # Shared components used across the application
+├── lib/                    # Utility functions and shared logic
+├── types/                  # TypeScript type definitions
+├── public/                 # Static assets (images, fonts, etc.)
+│
+├── auth.ts                 # Authentication configuration and utilities
+├── middleware.ts           # Next.js middleware for request handling
+├── routes.ts              # Application routing configuration
+├── next.config.ts         # Next.js configuration
+│
+├── package.json           # Project dependencies and scripts
+├── tsconfig.json         # TypeScript configuration
+├── eslint.config.mjs     # ESLint configuration
+├── prettier.config.js    # Prettier configuration
+└── postcss.config.mjs    # PostCSS configuration
+```
 
-## Learn More
+## Key Directories and Files
 
-To learn more about Next.js, take a look at the following resources:
+- **app/**: Contains all the pages and API routes using Next.js 13+ App Router architecture
+- **components/**: Reusable UI components shared across the application
+- **lib/**: Utility functions, hooks, and shared business logic
+- **types/**: TypeScript type definitions and interfaces
+- **public/**: Static assets that are served directly
+- **auth.ts**: Authentication setup and utilities
+- **middleware.ts**: Request middleware for handling authentication and routing
+- **routes.ts**: Centralized routing configuration
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Configuration Files
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **next.config.ts**: Next.js framework configuration
+- **tsconfig.json**: TypeScript compiler options
+- **eslint.config.mjs**: Code linting rules
+- **prettier.config.js**: Code formatting rules
+- **postcss.config.mjs**: CSS processing configuration
 
-## Deploy on Vercel
+## Development
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+This project uses:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Next.js 13+ with App Router
+- TypeScript for type safety
+- ESLint and Prettier for code quality
+- PostCSS for CSS processing
