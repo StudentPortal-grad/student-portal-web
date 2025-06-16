@@ -120,7 +120,7 @@ export default function SignInForm() {
           className="bg-black-brand flex w-full cursor-pointer items-center justify-center gap-2 rounded-[8px] px-4 py-1.5 text-base font-semibold text-white capitalize disabled:cursor-not-allowed disabled:opacity-50 sm:py-2 sm:text-lg"
         >
           {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
-          Sign In
+          {isLoading ? "Signing In..." : "Sign In"}
         </button>
       </div>
     </form>

@@ -5,42 +5,42 @@ import {
   authRoutes,
   publicRoutes,
 } from "./routes";
+import { NextResponse } from "next/server";
 
 export default auth((req) => {
   const { nextUrl } = req;
   const isLoggedIn = !!req.auth;
 
-  const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
+  // Define route types
+  const isApiRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
   const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
   const isAuthRoute = authRoutes.includes(nextUrl.pathname);
 
-  // Allow API auth routes
-  if (isApiAuthRoute) {
-    return;
+  // Handle API routes
+  if (isApiRoute) {
+    return NextResponse.next();
   }
 
-  // Redirect authenticated users away from auth routes
+  // Handle authentication routes
   if (isAuthRoute) {
     if (isLoggedIn) {
-      return Response.redirect(new URL(DEFAULT_REDIRECT_ROUTE, nextUrl));
+      return NextResponse.redirect(new URL(DEFAULT_REDIRECT_ROUTE, nextUrl));
     }
-    return;
+    return NextResponse.next();
   }
 
-  // Protect non-public routes
+  // Handle protected routes
   if (!isLoggedIn && !isPublicRoute) {
-    let callbackUrl = nextUrl.pathname;
-    if (nextUrl.search) {
-      callbackUrl += nextUrl.search;
-    }
+    const searchParams = new URLSearchParams({
+      callbackUrl: nextUrl.pathname + nextUrl.search,
+    });
 
-    const encodedCallbackUrl = encodeURIComponent(callbackUrl);
-    return Response.redirect(
-      new URL(`/auth/login?callbackUrl=${encodedCallbackUrl}`, nextUrl),
+    return NextResponse.redirect(
+      new URL(`/auth/login?${searchParams.toString()}`, nextUrl),
     );
   }
 
-  return;
+  return NextResponse.next();
 });
 
 export const config = {

@@ -1,21 +1,30 @@
 "use client";
-import { Separator } from "@/components/ui/separator";
 import { useForm } from "react-hook-form";
 import Image from "next/image";
-import React from "react";
-import { Input } from "@/components/ui/input";
-import Link from "next/link";
+import React, { useState } from "react";
 import {
   InputOTP,
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
+import { useRouter } from "next/navigation";
+import { AlertCircle, Loader2 } from "lucide-react";
+import Cookies from "js-cookie";
 
 interface FormData {
   otp: string;
 }
 
-export default function TwoFactorAuthForm() {
+export default function TwoFactorAuthForm({
+  baseUrl,
+  email,
+}: {
+  baseUrl: string;
+  email: string;
+}) {
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+
   const {
     register,
     handleSubmit,
@@ -26,13 +35,63 @@ export default function TwoFactorAuthForm() {
 
   const [submitError, setSubmitError] = React.useState<string>("");
 
-  const onSubmit = (data: FormData) => {
+  const onSubmit = async (data: FormData) => {
     if (data.otp.length !== 6) {
       setSubmitError("Please enter all 6 digits of the verification code");
       return;
     }
+    setIsLoading(true);
     setSubmitError("");
-    console.log(data);
+    try {
+      const response = await fetch(`${baseUrl}/auth/verify-reset-otp`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          otp: data.otp,
+          email: email,
+        }),
+      });
+      const result = await response.json();
+      if (result.success) {
+        Cookies.set("resetToken", result.data.resetToken, { path: "/" });
+        Cookies.remove("email", { path: "/" });
+        router.push("/auth/reset-password");
+      } else {
+        setSubmitError(result.message);
+      }
+    } catch (error) {
+      setSubmitError(
+        error instanceof Error ? error.message : "An error occurred",
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const resendOtp = async () => {
+    try {
+      const response = await fetch(`${baseUrl}/auth/forgot-password`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: email,
+        }),
+      });
+      const result = await response.json();
+      if (result.success) {
+        setSubmitError("");
+      } else {
+        setSubmitError(result.message);
+      }
+    } catch (error) {
+      setSubmitError(
+        error instanceof Error ? error.message : "An error occurred",
+      );
+    }
   };
 
   return (
@@ -50,16 +109,25 @@ export default function TwoFactorAuthForm() {
         />
         <FormHeader />
         <div className="text-black-100 flex items-center text-sm font-semibold sm:text-lg">
-          <p>*******</p>
-          <p>7987</p>
+          <p className="text-black-100 text-lg font-medium">
+            {email
+              ? `${email.slice(0, 4)}${"*".repeat(Math.max(0, email.length - 8))}${email.slice(-4)}`
+              : ""}
+          </p>
         </div>
+        {submitError && (
+          <div className="flex w-full items-center gap-2 rounded-lg border border-red-200 bg-red-50 p-3">
+            <AlertCircle className="h-5 w-5 flex-shrink-0 text-red-500" />
+            <p className="text-sm text-red-600">{submitError}</p>
+          </div>
+        )}
         <div className="flex flex-col gap-4">
           <OtpInput
             watch={watch}
             setValue={setValue}
             submitError={submitError}
           />
-          <FormFooter />
+          <FormFooter isLoading={isLoading} resendOtp={resendOtp} />
         </div>
       </div>
     </form>
@@ -79,23 +147,39 @@ function FormHeader() {
   );
 }
 
-function FormFooter() {
+function FormFooter({
+  isLoading,
+  resendOtp,
+}: {
+  isLoading: boolean;
+  resendOtp: () => void;
+}) {
   return (
     <div className="flex w-full flex-col items-center gap-4">
-      <button className="form-button">submit</button>
-      <p className="text-black-40 text-xs font-normal sm:text-sm">
-        <span>Didn't get the code ? </span>{" "}
-        <button className="text-secondary-purple-a hover:text-secondary-purple-b transition-colors duration-300">
+      <button
+        disabled={isLoading}
+        className="bg-black-brand flex w-full cursor-pointer items-center justify-center gap-2 rounded-[8px] px-4 py-1.5 text-base font-semibold text-white capitalize disabled:cursor-not-allowed disabled:opacity-50 sm:py-2 sm:text-lg"
+      >
+        {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
+        {isLoading ? "Submitting..." : "Submit"}
+      </button>
+      <div className="text-black-40 text-xs font-normal sm:text-sm">
+        <span>Didn't get the code ? </span>
+        <button
+          type="button"
+          className="text-secondary-purple-a hover:text-secondary-purple-b cursor-pointer transition-colors duration-300"
+          onClick={resendOtp}
+        >
           Resend
-        </button>{" "}
-        <span>or</span>{" "}
+        </button>
+        <span> or </span>
         <a
           href=""
           className="text-secondary-purple-a hover:text-secondary-purple-b transition-colors duration-300"
         >
           Call Us
         </a>
-      </p>
+      </div>
     </div>
   );
 }
@@ -150,7 +234,6 @@ function OtpInput({
           />
         </InputOTPGroup>
       </InputOTP>
-      {submitError && <p className="text-xs text-red-500">{submitError}</p>}
     </div>
   );
 }

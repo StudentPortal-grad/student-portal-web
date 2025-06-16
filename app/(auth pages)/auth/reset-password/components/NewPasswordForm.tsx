@@ -1,18 +1,12 @@
 "use client";
-import { Separator } from "@/components/ui/separator";
 import { useForm } from "react-hook-form";
-import Image from "next/image";
-import React from "react";
+import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
-import Link from "next/link";
-import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSlot,
-} from "@/components/ui/input-otp";
+import { useRouter } from "next/navigation";
+import Cookies from "js-cookie";
+import { AlertCircle, CheckCircle, Loader2 } from "lucide-react";
 
 interface FormData {
-  otp: string;
   newPassword: string;
   confirmPassword: string;
 }
@@ -35,7 +29,18 @@ const getPasswordStrength = (password: string): number => {
   return strength;
 };
 
-export default function NewPasswordForm() {
+export default function NewPasswordForm({
+  baseUrl,
+  resetToken,
+}: {
+  baseUrl: string;
+  resetToken: string;
+}) {
+  const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
   const {
     register,
     handleSubmit,
@@ -49,8 +54,34 @@ export default function NewPasswordForm() {
   const newPassword = watch("newPassword");
   const passwordStrength = getPasswordStrength(newPassword || "");
 
-  const onSubmit = (data: FormData) => {
-    console.log(data);
+  const onSubmit = async (data: FormData) => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(`${baseUrl}/auth/reset-password`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          resetToken: resetToken,
+          password: data.newPassword,
+        }),
+      });
+      const result = await response.json();
+      if (result.success) {
+        setSuccess(true);
+        setTimeout(() => {
+          Cookies.remove("resetToken", { path: "/" });
+          router.replace("/auth/login");
+        }, 1000);
+      } else {
+        setError(result.message);
+      }
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "An error occurred");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -60,6 +91,20 @@ export default function NewPasswordForm() {
     >
       <div className="flex flex-col items-center gap-5 sm:gap-7">
         <FormHeader />
+        {success && (
+          <div className="flex w-full items-center gap-2 rounded-lg border border-green-200 bg-green-50 p-3">
+            <CheckCircle className="h-5 w-5 flex-shrink-0 text-green-500" />
+            <p className="text-sm text-green-600">
+              Password reset successfully
+            </p>
+          </div>
+        )}
+        {error && (
+          <div className="flex w-full items-center gap-2 rounded-lg border border-red-200 bg-red-50 p-3">
+            <AlertCircle className="h-5 w-5 flex-shrink-0 text-red-500" />
+            <p className="text-sm text-red-600">{error}</p>
+          </div>
+        )}
         <div className="flex w-full flex-col gap-4">
           <div className="flex flex-col gap-1.5">
             <Input
@@ -96,8 +141,12 @@ export default function NewPasswordForm() {
             )}
           </div>
         </div>
-        <button className="form-button" disabled={passwordStrength < 4}>
-          submit
+        <button
+          disabled={passwordStrength < 4 || isLoading}
+          className="bg-black-brand flex w-full cursor-pointer items-center justify-center gap-2 rounded-[8px] px-4 py-1.5 text-base font-semibold text-white capitalize disabled:cursor-not-allowed disabled:opacity-50 sm:py-2 sm:text-lg"
+        >
+          {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
+          {isLoading ? "Submitting..." : "Submit"}
         </button>
       </div>
     </form>
