@@ -5,11 +5,13 @@ import SideBar from "./navigation/SideBar";
 import Navbar from "./navigation/Navbar";
 import Notifications from "./navigation/Notifications";
 import { useShortcut } from "@/lib/hooks/useShortcut";
-
+import { Session } from "next-auth";
 export default function LayoutContainer({
   children,
+  session,
 }: {
   children: React.ReactNode;
+  session: Session | null;
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
@@ -30,7 +32,7 @@ export default function LayoutContainer({
 
   return (
     <>
-      <SideBar open={sidebarOpen} />
+      <SideBar open={sidebarOpen} session={session} />
       <main className="main-layout">
         <Navbar
           sidebarOpen={sidebarOpen}

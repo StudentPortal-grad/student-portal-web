@@ -26,7 +26,7 @@ export default function TooltipWrapper({
       <Tooltip>
         <TooltipTrigger>{children}</TooltipTrigger>
         <TooltipContent align="center" side={direction}>
-          <p className="font-normal capitalize">{content}</p>
+          <p className="font-normal">{content}</p>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>

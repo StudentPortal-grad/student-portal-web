@@ -1,11 +1,22 @@
 import React from "react";
 import Credentials from "@/components/Credentials";
 import LayoutContainer from "@/components/LayoutContainer";
-export default function layout({ children }: { children: React.ReactNode }) {
+import { auth } from "@/auth";
+import { logout } from "@/lib/actions/logout";
+
+export default async function layout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const session = await auth();
+  if (!session) {
+    logout();
+  }
   return (
     <>
       <section className="layout !bg-white">
-        <LayoutContainer>
+        <LayoutContainer session={session}>
           {children}
           <Credentials variation="normal" />
         </LayoutContainer>

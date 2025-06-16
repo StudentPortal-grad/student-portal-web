@@ -8,13 +8,20 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import TooltipWrapper from "../TooltipWrapper";
 import LogoutButton from "../buttons/LogoutButton";
 import { useShortcut } from "@/lib/hooks/useShortcut";
+import { Session } from "next-auth";
 
-export default function SideBar({ open = true }: { open: boolean }) {
+export default function SideBar({
+  open = true,
+  session,
+}: {
+  open: boolean;
+  session: Session | null;
+}) {
   const pathname = usePathname();
 
   const pages = [
     {
-      name: "overview",
+      name: "Overview",
       shortcut: "O",
       path: "/overview",
       acceptedPaths: ["/overview"],
@@ -162,15 +169,21 @@ export default function SideBar({ open = true }: { open: boolean }) {
       <div
         className={`mt-auto flex flex-col ${open ? "" : "items-center"} gap-2`}
       >
-        <TooltipWrapper content="John Doe" direction="right" disabled={open}>
+        <TooltipWrapper
+          content={`${session?.user?.name || "User"} (${session?.user?.email || "No email provided"})`}
+          direction="right"
+          disabled={open}
+        >
           <div className={`flex items-center gap-2 ${open ? "ml-2" : ""}`}>
             <Avatar>
-              <AvatarImage src="https://github.com/shadcn.png" />
-              <AvatarFallback>CN</AvatarFallback>
+              <AvatarImage src={session?.user?.image || ""} />
+              <AvatarFallback>
+                {session?.user?.name?.charAt(0) || "U"}
+              </AvatarFallback>
             </Avatar>
             {open ? (
               <span className="text-black-brand text-sm font-normal capitalize">
-                John Doe
+                {session?.user?.name || "User"}
               </span>
             ) : null}
           </div>
