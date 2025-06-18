@@ -1,7 +1,7 @@
 import Image from "next/image";
 import React from "react";
 
-export default function Statistics() {
+export default function Statistics({ data }: { data: any }) {
   return (
     <div className="grid grid-cols-1 gap-7 md:grid-cols-2 lg:grid-cols-4">
       <div className="bg-primary-blue flex flex-col gap-4 rounded-2xl p-6">
@@ -14,7 +14,9 @@ export default function Statistics() {
             height={24}
           />
         </div>
-        <p className="text-2xl font-bold">{Number("2145").toLocaleString()}</p>
+        <p className="text-2xl font-bold">
+          {Number(data.users.total).toLocaleString()}
+        </p>
       </div>
 
       <div className="bg-primary-purple flex flex-col gap-4 rounded-2xl p-6">
@@ -27,7 +29,9 @@ export default function Statistics() {
             height={24}
           />
         </div>
-        <p className="text-2xl font-bold">{Number("42").toLocaleString()}</p>
+        <p className="text-2xl font-bold">
+          {Number(data.resources.total).toLocaleString()}
+        </p>
       </div>
 
       <div className="bg-primary-purple flex flex-col gap-4 rounded-2xl p-6">
@@ -35,7 +39,9 @@ export default function Statistics() {
           <p className="text-sm font-normal">Resources</p>
           <Image src="/icons/book.svg" alt="resources" width={24} height={24} />
         </div>
-        <p className="text-2xl font-bold">{Number("857").toLocaleString()}</p>
+        <p className="text-2xl font-bold">
+          {Number(data.events.active).toLocaleString()}
+        </p>
       </div>
 
       <div className="bg-primary-blue flex flex-col gap-4 rounded-2xl p-6">
@@ -48,7 +54,9 @@ export default function Statistics() {
             height={24}
           />
         </div>
-        <p className="text-2xl font-bold">{Number("124").toLocaleString()}</p>
+        <p className="text-2xl font-bold">
+          {Number(data.communities.total).toLocaleString()}
+        </p>
       </div>
     </div>
   );

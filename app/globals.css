@@ -27,6 +27,56 @@
   --color-primary-blue-base: #2563eb;
   --color-primary-purple: #e5ecf6;
   --color-primary-light: #f7f9fb;
+
+  /* Custom bounce animation for logo */
+  @keyframes bounce-logo {
+    0%,
+    100% {
+      transform: translateY(0);
+      animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+    }
+    50% {
+      transform: translateY(-30%);
+      animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+    }
+  }
+
+  /* Custom gradient animation for logo */
+  @keyframes gradient-logo {
+    0%,
+    100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+
+  /* Impressive spin animation for logo with gray shadow */
+  @keyframes spin-impressive {
+    0% {
+      transform: rotate(0deg) scale(1);
+      filter: drop-shadow(0 0 0 #b0b0b0);
+    }
+    25% {
+      filter: drop-shadow(0 0 8px #b0b0b0) drop-shadow(0 0 4px #d1d5db);
+    }
+    50% {
+      transform: rotate(180deg) scale(1.15);
+      filter: drop-shadow(0 0 24px #b0b0b0) drop-shadow(0 0 16px #6b7280);
+    }
+    75% {
+      filter: drop-shadow(0 0 8px #b0b0b0) drop-shadow(0 0 4px #d1d5db);
+    }
+    100% {
+      transform: rotate(360deg) scale(1);
+      filter: drop-shadow(0 0 0 #b0b0b0);
+    }
+  }
+}
+
+.animate-spin-impressive {
+  animation: spin-impressive 1.2s cubic-bezier(0.77, 0, 0.18, 1) infinite;
 }
 
 :root {

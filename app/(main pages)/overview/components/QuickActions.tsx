@@ -11,22 +11,22 @@ export default function QuickActions() {
         <QuickActionButton
           icon="/icons/upload-white.svg"
           text="Upload Resource"
-          destination="/"
+          destination="/resources/new"
         />
         <QuickActionButton
           icon="/icons/event-white.svg"
           text="Create Event"
-          destination="/"
+          destination="/events/new"
         />
         <QuickActionButton
           icon="/icons/users-white.svg"
           text="Manage Groups"
-          destination="/"
+          destination="/communities/new"
         />
         <QuickActionButton
           icon="/icons/ai-white.svg"
           text="Retrain Ai"
-          destination="/"
+          destination="/ai"
         />
       </div>
     </div>
