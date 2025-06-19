@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AlertCircle, Loader2 } from "lucide-react";
 import Cookies from "js-cookie";
+import ErrorMessage from "@/components/messages/ErrorMessage";
 
 interface FormData {
   email: string;
@@ -58,12 +59,8 @@ export default function ForgotPasswordForm({ baseUrl }: { baseUrl: string }) {
         <FormHeader />
 
         <div className="flex w-full flex-col gap-3 sm:gap-4">
-          {error && (
-            <div className="flex w-full items-center gap-2 rounded-lg border border-red-200 bg-red-50 p-3">
-              <AlertCircle className="h-5 w-5 flex-shrink-0 text-red-500" />
-              <p className="text-sm text-red-600">{error}</p>
-            </div>
-          )}
+          {error && <ErrorMessage message={error} />}
+
           <div className="flex flex-col gap-1.5 sm:gap-2">
             <Input
               disabled={isLoading}

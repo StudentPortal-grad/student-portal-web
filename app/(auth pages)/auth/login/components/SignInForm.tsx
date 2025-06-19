@@ -9,6 +9,9 @@ import { login } from "@/lib/actions/login";
 import { AlertCircle, CheckCircle } from "lucide-react";
 import { Loader2 } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
+import SuccessMessage from "@/components/messages/SuccessMessage";
+import ErrorMessage from "@/components/messages/ErrorMessage";
+import TooltipWrapper from "@/components/TooltipWrapper";
 
 interface FormData {
   email: string;
@@ -54,21 +57,17 @@ export default function SignInForm() {
     >
       <div className="flex flex-col items-center gap-5 sm:gap-7">
         <FormHeader />
-        {loginSuccess && (
-          <div className="flex w-full items-center gap-2 rounded-lg border border-green-200 bg-green-50 p-3">
-            <CheckCircle className="h-5 w-5 flex-shrink-0 text-green-500" />
-            <p className="text-sm text-green-600">Logged in successfully</p>
-          </div>
-        )}
-        {loginError && (
-          <div className="flex w-full items-center gap-2 rounded-lg border border-red-200 bg-red-50 p-3">
-            <AlertCircle className="h-5 w-5 flex-shrink-0 text-red-500" />
-            <p className="text-sm text-red-600">{loginError}</p>
-          </div>
-        )}
-        <div className="flex w-full items-center gap-3 sm:flex-row sm:gap-4">
-          <AuthProviderButton provider="google" disabled={isLoading} />
-          <AuthProviderButton provider="microsoft" disabled={isLoading} />
+
+        {loginSuccess && <SuccessMessage message="Logged in successfully" />}
+        {loginError && <ErrorMessage message={loginError} />}
+
+        <div className="flex w-full items-center gap-3 opacity-50 sm:flex-row sm:gap-4">
+          <TooltipWrapper content="Coming Soon" direction="top">
+            <AuthProviderButton provider="google" disabled={isLoading} />
+          </TooltipWrapper>
+          <TooltipWrapper content="Coming Soon" direction="top">
+            <AuthProviderButton provider="microsoft" disabled={isLoading} />
+          </TooltipWrapper>
         </div>
         <FormSeparator />
         <div className="flex w-full flex-col gap-3 sm:gap-4">
@@ -151,7 +150,7 @@ function AuthProviderButton({
     <button
       type="button"
       disabled={disabled}
-      className="bg-white-100 border-black-10 flex w-full cursor-pointer items-center justify-center gap-2 rounded-[8px] border-[1px] px-3 py-1.5 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto sm:py-[6px]"
+      className="bg-white-100 border-black-10 flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-[8px] border-[1px] px-3 py-1.5 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto sm:py-[6px]"
     >
       <Image
         src={`/icons/${provider}.svg`}

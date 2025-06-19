@@ -5,6 +5,8 @@ import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import { AlertCircle, CheckCircle, Loader2 } from "lucide-react";
+import SuccessMessage from "@/components/messages/SuccessMessage";
+import ErrorMessage from "@/components/messages/ErrorMessage";
 
 interface FormData {
   newPassword: string;
@@ -91,20 +93,10 @@ export default function NewPasswordForm({
     >
       <div className="flex flex-col items-center gap-5 sm:gap-7">
         <FormHeader />
-        {success && (
-          <div className="flex w-full items-center gap-2 rounded-lg border border-green-200 bg-green-50 p-3">
-            <CheckCircle className="h-5 w-5 flex-shrink-0 text-green-500" />
-            <p className="text-sm text-green-600">
-              Password reset successfully
-            </p>
-          </div>
-        )}
-        {error && (
-          <div className="flex w-full items-center gap-2 rounded-lg border border-red-200 bg-red-50 p-3">
-            <AlertCircle className="h-5 w-5 flex-shrink-0 text-red-500" />
-            <p className="text-sm text-red-600">{error}</p>
-          </div>
-        )}
+
+        {success && <SuccessMessage message="Password reset successfully" />}
+        {error && <ErrorMessage message={error} />}
+
         <div className="flex w-full flex-col gap-4">
           <div className="flex flex-col gap-1.5">
             <Input
