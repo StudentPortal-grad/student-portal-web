@@ -1,18 +1,22 @@
-"use client";
 import React from "react";
-import { useRouter } from "next/navigation";
-import DeleteEventForm from "../../components/DeleteResourceForm";
+import { auth } from "@/auth";
+import DeleteResourceForm from "../../components/DeleteResourceForm";
 
-export default function DeleteEventModal() {
-  const router = useRouter();
+export default async function DeleteResourcePage({
+  params,
+}: {
+  params: Promise<{ resourceId: string }>;
+}) {
+  const { resourceId } = await params;
+  const session = await auth();
+
   return (
     <section className="flex items-start justify-center bg-white p-7">
-      <DeleteEventForm
-        onDelete={() => {
-          // Add your delete logic here
-          router.back();
-        }}
-        onCancel={() => router.back()}
+      <DeleteResourceForm
+        resourceId={resourceId}
+        modal={false}
+        session={session}
+        baseUrl={process.env.BASE_URL || ""}
       />
     </section>
   );

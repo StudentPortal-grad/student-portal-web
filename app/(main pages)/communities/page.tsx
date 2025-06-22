@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 import Statistics from "./components/Statistics";
 import CommunitiesList from "./components/CommunitiesList";
 import { redirect } from "next/navigation";
@@ -19,10 +19,12 @@ export default async function page() {
           session={session || null}
           baseUrl={process.env.BASE_URL || ""}
         />
-        <CommunitiesList
-          session={session || null}
-          baseUrl={process.env.BASE_URL || ""}
-        />
+        <Suspense fallback={<div>Loading communities...</div>}>
+          <CommunitiesList
+            session={session || null}
+            baseUrl={process.env.BASE_URL || ""}
+          />
+        </Suspense>
       </div>
     </section>
   );

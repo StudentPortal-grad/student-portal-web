@@ -9,11 +9,13 @@ export default function DeleteUserModal({
   modal = true,
   session,
   baseUrl,
+  onDeleteSuccess,
 }: {
   userId: string;
   modal?: boolean;
   session: Session | null;
   baseUrl: string;
+  onDeleteSuccess?: () => void;
 }) {
   const router = useRouter();
   const [isDeleting, setIsDeleting] = useState(false);
@@ -31,7 +33,25 @@ export default function DeleteUserModal({
       if (!response.ok) {
         throw new Error("Failed to delete user");
       }
-      router.back();
+
+      // Call the callback to trigger refetch if provided
+      if (onDeleteSuccess) {
+        onDeleteSuccess();
+      }
+
+      // For modal, use router.back() to close it
+      // For page, redirect to users with refetch parameter
+      if (modal) {
+        router.back();
+        // Add a small delay to ensure modal closes, then trigger refetch
+        setTimeout(() => {
+          const currentUrl = new URL(window.location.href);
+          currentUrl.searchParams.set("refetch", "true");
+          router.replace(currentUrl.pathname + currentUrl.search);
+        }, 100);
+      } else {
+        router.push("/users?refetch=true");
+      }
     } catch (error) {
       console.error("Error deleting user:", error);
     } finally {

@@ -8,7 +8,7 @@ import FilterBar from "./FilterBar";
 import Link from "next/link";
 import Image from "next/image";
 import { Session } from "next-auth";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Loading from "@/components/messages/Loading";
 import ErrorMessage from "@/components/messages/ErrorMessage";
 
@@ -20,6 +20,7 @@ export default function ResourcesTable({
   baseUrl: string;
 }) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [selectedRows, setSelectedRows] = useState<RowSelectionState>({});
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
@@ -35,6 +36,16 @@ export default function ResourcesTable({
   const [categories, setCategories] = useState<string[]>([]);
   const [tagFilter, setTagFilter] = useState<string[]>([]);
   const [debouncedTagFilter, setDebouncedTagFilter] = useState<string[]>([]);
+
+  useEffect(() => {
+    const refetch = searchParams.get("refetch");
+    if (refetch === "true") {
+      setDeleteTrigger((prev) => prev + 1);
+      const newUrl = new URL(window.location.href);
+      newUrl.searchParams.delete("refetch");
+      router.replace(newUrl.pathname + newUrl.search);
+    }
+  }, [searchParams, router]);
 
   function pageChange(page: number) {
     setPage(page);
@@ -80,7 +91,7 @@ export default function ResourcesTable({
       setError(null);
 
       try {
-        const response = await fetch(`${baseUrl}/resources/bulk/delete`, {
+        const response = await fetch(`${baseUrl}/resources/bulk`, {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
@@ -105,7 +116,7 @@ export default function ResourcesTable({
         setSelectedRows({});
         setDeleteTrigger((prev) => prev + 1);
       } catch (error) {
-        console.error("Error deleting resources:", error);
+        console.error("❌ Error deleting resources:", error);
         setError(
           error instanceof Error ? error.message : "Failed to delete resources",
         );
@@ -181,7 +192,12 @@ export default function ResourcesTable({
         }
 
         const resourcesData = data.data.resources;
-        setResources(resourcesData);
+
+        const mappedResources = resourcesData.map((resource: any) => ({
+          ...resource,
+          id: resource._id,
+        }));
+        setResources(mappedResources);
         setTotalPages(data.data.pagination?.pages || 1);
         setCategories(data.data.categories || []);
       } catch (error) {
@@ -215,7 +231,6 @@ export default function ResourcesTable({
       const selectedResources = resources.filter((resource) =>
         selectedResourceIds.includes(resource.id),
       );
-      console.log("Selected Resources:", selectedResources);
     }
   }, [selectedRows, resources]);
 

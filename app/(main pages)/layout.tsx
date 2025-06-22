@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 import Credentials from "@/components/Credentials";
 import LayoutContainer from "@/components/LayoutContainer";
 import { auth } from "@/auth";
@@ -16,10 +16,15 @@ export default async function layout({
   return (
     <>
       <section className="layout !bg-white">
-        <LayoutContainer session={session} baseUrl={process.env.BASE_URL || ""}>
-          {children}
-          <Credentials variation="normal" />
-        </LayoutContainer>
+        <Suspense fallback={<div>Loading...</div>}>
+          <LayoutContainer
+            session={session}
+            baseUrl={process.env.BASE_URL || ""}
+          >
+            {children}
+            <Credentials variation="normal" />
+          </LayoutContainer>
+        </Suspense>
       </section>
     </>
   );

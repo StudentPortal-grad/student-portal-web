@@ -4,6 +4,6 @@ import { NextResponse } from "next/server";
 export async function GET() {
   await logout();
   return NextResponse.redirect(
-    new URL("/session/expired", process.env.BASE_URL),
+    new URL("/auth/login", process.env.NEXTAUTH_URL || "http://localhost:3000"),
   );
 }

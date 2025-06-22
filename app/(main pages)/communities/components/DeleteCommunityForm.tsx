@@ -1,18 +1,73 @@
-import React from "react";
+"use client";
+import React, { useState } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { Session } from "next-auth";
 
 interface DeleteCommunityFormProps {
-  onDelete: () => void;
-  onCancel: () => void;
+  communityId: string;
+  modal?: boolean;
+  session: Session | null;
+  baseUrl: string;
+  onDelete?: () => void;
+  onCancel?: () => void;
 }
 
 export default function DeleteCommunityForm({
+  communityId,
+  modal = true,
+  session,
+  baseUrl,
   onDelete,
   onCancel,
 }: DeleteCommunityFormProps) {
-  const handleSubmit = (e: React.FormEvent) => {
+  const router = useRouter();
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onDelete();
+    setIsDeleting(true);
+
+    try {
+      const response = await fetch(`${baseUrl}/communities/${communityId}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session?.token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete community");
+      }
+
+      if (onDelete) {
+        onDelete();
+      }
+
+      if (modal) {
+        router.back();
+        setTimeout(() => {
+          const currentUrl = new URL(window.location.href);
+          currentUrl.searchParams.set("refetch", "true");
+          router.replace(currentUrl.pathname + currentUrl.search);
+        }, 100);
+      } else {
+        router.push("/communities?refetch=true");
+      }
+    } catch (error) {
+      console.error("Error deleting community:", error);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const handleCancel = () => {
+    if (onCancel) {
+      onCancel();
+    } else {
+      router.back();
+    }
   };
 
   return (
@@ -38,15 +93,17 @@ export default function DeleteCommunityForm({
           <button
             type="button"
             className="rounded-lg bg-gray-100 px-6 py-2 text-base font-medium text-gray-800 transition hover:bg-gray-200"
-            onClick={onCancel}
+            onClick={handleCancel}
+            disabled={isDeleting}
           >
             Cancel
           </button>
           <button
             type="submit"
             className="rounded-lg bg-red-500 px-6 py-2 text-base font-medium text-white transition hover:bg-red-600"
+            disabled={isDeleting}
           >
-            Delete
+            {isDeleting ? "Deleting..." : "Delete"}
           </button>
         </div>
       </form>

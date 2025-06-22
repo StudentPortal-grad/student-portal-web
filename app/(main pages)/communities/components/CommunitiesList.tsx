@@ -5,6 +5,7 @@ import { ActionBar } from "./ActionBar";
 import { Session } from "next-auth";
 import Loading from "@/components/messages/Loading";
 import ErrorMessage from "@/components/messages/ErrorMessage";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function CommunitiesList({
   session,
@@ -13,11 +14,26 @@ export default function CommunitiesList({
   session: Session;
   baseUrl: string;
 }) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [communities, setCommunities] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [deleteTrigger, setDeleteTrigger] = useState(0);
+
+  // Check for refetch parameter and trigger refetch
+  useEffect(() => {
+    const refetch = searchParams.get("refetch");
+    if (refetch === "true") {
+      setDeleteTrigger((prev) => prev + 1);
+      // Remove the refetch parameter from URL
+      const newUrl = new URL(window.location.href);
+      newUrl.searchParams.delete("refetch");
+      router.replace(newUrl.pathname + newUrl.search);
+    }
+  }, [searchParams, router]);
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -53,7 +69,7 @@ export default function CommunitiesList({
       }
     };
     fetchCommunities();
-  }, [session, baseUrl, debouncedSearch]);
+  }, [session, baseUrl, debouncedSearch, deleteTrigger]);
 
   return (
     <div className="flex flex-col gap-4">

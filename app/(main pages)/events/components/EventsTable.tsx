@@ -5,7 +5,7 @@ import { columns, Event } from "./columns";
 import { ActionBar } from "./ActionBar";
 import { RowSelectionState } from "@tanstack/react-table";
 import { Session } from "next-auth";
-import { redirect, useRouter } from "next/navigation";
+import { redirect, useRouter, useSearchParams } from "next/navigation";
 import Loading from "@/components/messages/Loading";
 import ErrorMessage from "@/components/messages/ErrorMessage";
 
@@ -17,6 +17,7 @@ export default function EventsTable({
   baseUrl: string;
 }) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [selectedRows, setSelectedRows] = useState<RowSelectionState>({});
   const [searchQuery, setSearchQuery] = useState("");
   const [page, setPage] = useState(1);
@@ -25,6 +26,16 @@ export default function EventsTable({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [deleteTrigger, setDeleteTrigger] = useState(0);
+
+  useEffect(() => {
+    const refetch = searchParams.get("refetch");
+    if (refetch === "true") {
+      setDeleteTrigger((prev) => prev + 1);
+      const newUrl = new URL(window.location.href);
+      newUrl.searchParams.delete("refetch");
+      router.replace(newUrl.pathname + newUrl.search);
+    }
+  }, [searchParams, router]);
 
   function pageChange(page: number) {
     setPage(page);
@@ -55,7 +66,7 @@ export default function EventsTable({
       setError(null);
 
       try {
-        const response = await fetch(`${baseUrl}/events/bulk/delete`, {
+        const response = await fetch(`${baseUrl}/events/bulk`, {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
