@@ -42,7 +42,11 @@ export default function LayoutContainer({
         />
         {children}
       </main>
-      <Notifications open={notificationsOpen} />
+      <Notifications
+        open={notificationsOpen}
+        session={session}
+        baseUrl={process.env.BASE_URL || ""}
+      />
     </>
   );
 }

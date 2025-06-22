@@ -10,16 +10,6 @@ export function ActionBar({ onSearch }: ActionBarProps) {
   return (
     <div className="bg-primary-light flex w-full items-center justify-between rounded-[8px] p-2">
       <div className="flex items-center gap-4">
-        <TooltipWrapper content="A - Z">
-          <div className="bg-black-5 cursor-pointer rounded-[8px] p-1">
-            <Image
-              src="/icons/sorting.svg"
-              alt="sorting"
-              width={20}
-              height={20}
-            />
-          </div>
-        </TooltipWrapper>
         <div className="bg-black-10 h-[20px] w-[1px]"></div>
       </div>
       <div className="flex items-center gap-4">

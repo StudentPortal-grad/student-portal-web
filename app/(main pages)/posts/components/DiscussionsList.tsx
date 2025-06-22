@@ -1,7 +1,8 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { ActionBar } from "./ActionBar";
 import DisscussionCard from "./DisscussionCard";
+import { Session } from "next-auth";
 
 const mockDiscussions = [
   {
@@ -56,7 +57,30 @@ const mockDiscussions = [
   },
 ];
 
-export default function DiscussionsList() {
+export default function DiscussionsList({
+  session,
+  baseUrl,
+}: {
+  session: Session;
+  baseUrl: string;
+}) {
+  // const [discussions, setDiscussions] = useState<any[]>([]);
+
+  // useEffect(() => {
+
+  //   const fetchDiscussions = async () => {
+  //     const response = await fetch(`${baseUrl}/discussions`, {
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         Authorization: `Bearer ${session.token}`,
+  //       },
+  //     });
+  //     const data = await response.json();
+  //     setDiscussions(data);
+  //   };
+  //   fetchDiscussions();
+  // }, [session, baseUrl]);
+
   return (
     <div className="flex flex-col gap-4">
       <ActionBar onSearch={() => {}} />

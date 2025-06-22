@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import TooltipWrapper from "../TooltipWrapper";
+import { Session } from "next-auth";
 
 const notifications = [
   {
@@ -84,7 +85,31 @@ const activities = [
   },
 ];
 
-export default function Notifications({ open }: { open: boolean }) {
+export default function Notifications({
+  open,
+  session,
+  baseUrl,
+}: {
+  open: boolean;
+  session: Session | null;
+  baseUrl: string;
+}) {
+  // const [notifications, setNotifications] = useState<any[]>([]);
+
+  // useEffect(() => {
+  //   const fetchNotifications = async () => {
+  //     const response = await fetch(`${baseUrl}/notifications`, {
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         Authorization: `Bearer ${session?.token}`,
+  //       },
+  //     });
+  //     const data = await response.json();
+  //     setNotifications(data);
+  //   };
+  //   fetchNotifications();
+  // }, [session, baseUrl]);
+
   return open ? (
     <div className="border-black-10 text-black-100 flex h-full w-[300px] flex-col gap-6 border-l-1 bg-white px-4 py-7 text-sm">
       {/* Notifications Section */}

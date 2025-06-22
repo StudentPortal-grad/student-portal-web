@@ -41,13 +41,13 @@ export default function SideBar({
       acceptedPaths: ["/communities"],
       icon: "/icons/communities.svg",
     },
-    {
-      name: "Posts",
-      shortcut: "P",
-      path: "/posts",
-      acceptedPaths: ["/posts"],
-      icon: "/icons/comments.svg",
-    },
+    // {
+    //   name: "Posts",
+    //   shortcut: "P",
+    //   path: "/posts",
+    //   acceptedPaths: ["/posts"],
+    //   icon: "/icons/comments.svg",
+    // },
     {
       name: "Resources",
       shortcut: "R",
