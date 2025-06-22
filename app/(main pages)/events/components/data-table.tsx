@@ -51,12 +51,9 @@ export function DataTable<TData, TValue>({
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     enableRowSelection: true,
-    // Disable client-side pagination
     manualPagination: true,
     pageCount: numPages,
-    // Disable automatic page reset on selection
     autoResetPageIndex: false,
-    // Use row ID for selection instead of index
     getRowId: getRowId || ((row, index) => index.toString()),
   });
 

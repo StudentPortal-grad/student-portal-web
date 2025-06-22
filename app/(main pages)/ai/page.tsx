@@ -23,7 +23,7 @@ export default async function page() {
       <div className="min-h-0 flex-1">
         <ModelRetraining
           session={session}
-          baseUrl={process.env.BASE_URL || ""}
+          baseUrl={process.env.AI_API_URL || ""}
           modelApiKey={process.env.MODEL_API_KEY || ""}
         />
       </div>

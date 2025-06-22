@@ -11,7 +11,9 @@ export type EventFormData = {
   location: string;
   visibility: string;
   capacity?: string;
+  category?: string;
   file?: File | null;
+  tags?: string[];
 };
 
 interface EventFormProps {

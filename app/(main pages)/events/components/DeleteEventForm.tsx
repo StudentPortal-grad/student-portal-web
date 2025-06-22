@@ -41,16 +41,12 @@ export default function DeleteEventForm({
         throw new Error("Failed to delete event");
       }
 
-      // Call the callback to trigger refetch if provided
       if (onDelete) {
         onDelete();
       }
 
-      // For modal, use router.back() to close it
-      // For page, redirect to events with refetch parameter
       if (modal) {
         router.back();
-        // Add a small delay to ensure modal closes, then trigger refetch
         setTimeout(() => {
           const currentUrl = new URL(window.location.href);
           currentUrl.searchParams.set("refetch", "true");

@@ -11,7 +11,6 @@ import {
 } from "recharts";
 import moment from "moment";
 
-// Accepts the raw API response as the data prop
 export default function Chart({
   data,
 }: {
@@ -20,13 +19,11 @@ export default function Chart({
     userHistory: { roles: string[]; totalCount: number; date: string }[];
   };
 }) {
-  // Get current year and month
   const now = moment();
   const year = now.year();
-  const month = now.month(); // 0-indexed
+  const month = now.month();
   const daysInMonth = now.daysInMonth();
 
-  // Map userHistory to a Map of day -> totalCount
   const chartMap = new Map<number, number>();
   if (data?.userHistory) {
     data.userHistory.forEach((entry) => {
@@ -37,7 +34,6 @@ export default function Chart({
     });
   }
 
-  // Build chart data for all days in the current month
   const chartData = Array.from({ length: daysInMonth }, (_, i) => {
     const day = i + 1;
     return {

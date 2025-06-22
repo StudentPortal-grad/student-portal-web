@@ -133,7 +133,6 @@ export function DataTable<TData, TValue>({
               pages.push("...");
               pages.push(numPages);
             } else if (currentPage >= numPages - 3) {
-              // Near end: show first + ellipsis + last 5
               pages.push(1);
               pages.push("...");
               for (let i = numPages - 4; i <= numPages; i++) {

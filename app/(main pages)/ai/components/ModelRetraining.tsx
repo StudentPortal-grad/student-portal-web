@@ -2,7 +2,7 @@
 
 import { Session } from "next-auth";
 import Image from "next/image";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import SuccessMessage from "@/components/messages/SuccessMessage";
 import ErrorMessage from "@/components/messages/ErrorMessage";
 
@@ -42,6 +42,17 @@ export default function ModelRetraining({
   } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  useEffect(() => {
+    console.log(
+      "Model API Key:",
+      modelApiKey,
+      "Base URL:",
+      baseUrl,
+      "Session:",
+      session,
+    );
+  }, [modelApiKey, baseUrl, session]);
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;
     console.log("Selected file:", file);
@@ -67,12 +78,12 @@ export default function ModelRetraining({
       formData.append("file", selectedFile);
       formData.append("rebuild", "true");
 
-      const response = await fetch(`${baseUrl}/admin/upload-pdf`, {
+      const response = await fetch(`${baseUrl}/admin/upload-document`, {
         method: "POST",
         headers: {
           "Content-Type": "multipart/form-data",
           "api-key": modelApiKey,
-          Authorization: `Bearer ${session.user.token}`,
+          Authorization: `Bearer ${session.token}`,
         },
         body: formData,
       });

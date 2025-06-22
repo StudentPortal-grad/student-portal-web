@@ -23,7 +23,6 @@ export default function CommunitiesList({
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [deleteTrigger, setDeleteTrigger] = useState(0);
 
-  // Check for refetch parameter and trigger refetch
   useEffect(() => {
     const refetch = searchParams.get("refetch");
     if (refetch === "true") {
