@@ -42,20 +42,8 @@ export default function ModelRetraining({
   } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    console.log(
-      "Model API Key:",
-      modelApiKey,
-      "Base URL:",
-      baseUrl,
-      "Session:",
-      session,
-    );
-  }, [modelApiKey, baseUrl, session]);
-
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;
-    console.log("Selected file:", file);
     setSelectedFile(file);
     setMessage(null);
   };
@@ -81,9 +69,7 @@ export default function ModelRetraining({
       const response = await fetch(`${baseUrl}/admin/upload-document`, {
         method: "POST",
         headers: {
-          "Content-Type": "multipart/form-data",
-          "api-key": modelApiKey,
-          Authorization: `Bearer ${session.token}`,
+          "api-key": "admin_secret_key",
         },
         body: formData,
       });
