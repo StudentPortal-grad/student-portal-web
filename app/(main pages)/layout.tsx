@@ -16,7 +16,7 @@ export default async function layout({
   return (
     <>
       <section className="layout !bg-white">
-        <LayoutContainer session={session}>
+        <LayoutContainer session={session} baseUrl={process.env.BASE_URL || ""}>
           {children}
           <Credentials variation="normal" />
         </LayoutContainer>

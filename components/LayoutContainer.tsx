@@ -9,9 +9,11 @@ import { Session } from "next-auth";
 export default function LayoutContainer({
   children,
   session,
+  baseUrl,
 }: {
   children: React.ReactNode;
   session: Session | null;
+  baseUrl: string;
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
@@ -45,7 +47,7 @@ export default function LayoutContainer({
       <Notifications
         open={notificationsOpen}
         session={session}
-        baseUrl={process.env.BASE_URL || ""}
+        baseUrl={baseUrl}
       />
     </>
   );
