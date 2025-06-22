@@ -1,19 +1,50 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { Session } from "next-auth";
 
-export default function DeleteUserModal({ userId }: { userId: string }) {
-  // Submission handler
+export default function DeleteUserModal({
+  userId,
+  modal = true,
+  session,
+  baseUrl,
+}: {
+  userId: string;
+  modal?: boolean;
+  session: Session | null;
+  baseUrl: string;
+}) {
   const router = useRouter();
-  const handleSubmit = (e: React.FormEvent) => {
+  const [isDeleting, setIsDeleting] = useState(false);
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Add your delete logic here
-    router.back();
+    setIsDeleting(true);
+    try {
+      const response = await fetch(`${baseUrl}/users/${userId}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session?.token}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error("Failed to delete user");
+      }
+      router.back();
+    } catch (error) {
+      console.error("Error deleting user:", error);
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
+    <div
+      className={`flex items-center justify-center ${
+        modal ? "fixed inset-0 z-50 bg-black/30 backdrop-blur-sm" : "bg-white"
+      }`}
+    >
       <div className="w-full max-w-xl rounded-xl bg-white p-8 text-center font-sans shadow-lg">
         <div className="mb-4 text-base font-medium text-gray-400">
           Delete User
@@ -43,8 +74,9 @@ export default function DeleteUserModal({ userId }: { userId: string }) {
             <button
               type="submit"
               className="rounded-lg bg-red-500 px-6 py-2 text-base font-medium text-white transition hover:bg-red-600"
+              disabled={isDeleting}
             >
-              Delete
+              {isDeleting ? "Deleting..." : "Delete"}
             </button>
           </div>
         </form>

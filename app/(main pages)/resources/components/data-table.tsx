@@ -30,6 +30,8 @@ interface DataTableProps<TData, TValue> {
   globalFilter?: string;
   onPageChange?: (page: number) => void;
   numPages: number;
+  currentPage?: number;
+  getRowId?: (row: TData) => string;
 }
 
 export function DataTable<TData, TValue>({
@@ -40,9 +42,16 @@ export function DataTable<TData, TValue>({
   globalFilter = "",
   onPageChange,
   numPages,
+  currentPage = 1,
+  getRowId,
 }: DataTableProps<TData, TValue>) {
   const [pageSize] = React.useState(10);
-  const [pageIndex, setPageIndex] = React.useState(0);
+  const [pageIndex, setPageIndex] = React.useState(currentPage - 1);
+
+  // Update pageIndex when currentPage changes
+  React.useEffect(() => {
+    setPageIndex(currentPage - 1);
+  }, [currentPage]);
 
   const table = useReactTable({
     data,
@@ -77,6 +86,7 @@ export function DataTable<TData, TValue>({
     pageCount: numPages,
     // Disable automatic page reset on selection
     autoResetPageIndex: false,
+    getRowId: getRowId ? (row) => getRowId(row) : undefined,
   });
 
   return (
@@ -138,26 +148,74 @@ export function DataTable<TData, TValue>({
             style={{ color: "var(--color-black-40)" }}
           />
         </button>
-        {Array.from({ length: table.getPageCount() }, (_, i) => {
-          const isCurrent = table.getState().pagination.pageIndex === i;
-          return (
-            <button
-              key={i}
-              className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-medium transition select-none ${isCurrent ? "" : "hover:bg-black-5"} cursor-pointer`}
-              onClick={() => table.setPageIndex(i)}
-              aria-current={isCurrent ? "page" : undefined}
-              style={{
-                color: isCurrent
-                  ? "var(--color-black-100)"
-                  : "var(--color-black-40)",
-                background: "transparent",
-                fontWeight: isCurrent ? 700 : 500,
-              }}
-            >
-              {i + 1}
-            </button>
-          );
-        })}
+
+        {(() => {
+          const pages = [];
+          const maxVisiblePages = 7;
+          const currentPageNum = table.getState().pagination.pageIndex + 1;
+          const totalPages = table.getPageCount();
+
+          if (totalPages <= maxVisiblePages) {
+            for (let i = 1; i <= totalPages; i++) {
+              pages.push(i);
+            }
+          } else {
+            if (currentPageNum <= 4) {
+              for (let i = 1; i <= 5; i++) {
+                pages.push(i);
+              }
+              pages.push("...");
+              pages.push(totalPages);
+            } else if (currentPageNum >= totalPages - 3) {
+              pages.push(1);
+              pages.push("...");
+              for (let i = totalPages - 4; i <= totalPages; i++) {
+                pages.push(i);
+              }
+            } else {
+              pages.push(1);
+              pages.push("...");
+              for (let i = currentPageNum - 2; i <= currentPageNum + 2; i++) {
+                pages.push(i);
+              }
+              pages.push("...");
+              pages.push(totalPages);
+            }
+          }
+
+          return pages.map((page, index) => {
+            if (page === "...") {
+              return (
+                <span
+                  key={`ellipsis-${index}`}
+                  className="flex h-6 w-6 items-center justify-center text-xs text-gray-500"
+                >
+                  ...
+                </span>
+              );
+            }
+
+            const isCurrent = currentPageNum === page;
+            return (
+              <button
+                key={page}
+                className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-medium transition select-none ${isCurrent ? "" : "hover:bg-black-5"} cursor-pointer`}
+                onClick={() => table.setPageIndex((page as number) - 1)}
+                aria-current={isCurrent ? "page" : undefined}
+                style={{
+                  color: isCurrent
+                    ? "var(--color-black-100)"
+                    : "var(--color-black-40)",
+                  background: "transparent",
+                  fontWeight: isCurrent ? 700 : 500,
+                }}
+              >
+                {page}
+              </button>
+            );
+          });
+        })()}
+
         <button
           className="hover:bg-black-5 flex h-6 w-6 items-center justify-center rounded-full disabled:opacity-50"
           onClick={() => table.nextPage()}

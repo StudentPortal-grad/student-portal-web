@@ -2,15 +2,21 @@ import { ColumnDef } from "@tanstack/react-table";
 import Image from "next/image";
 import TooltipWrapper from "@/components/TooltipWrapper";
 import Link from "next/link";
+import moment from "moment";
 
 export type Resource = {
   id: string;
   fileName: string;
+  title: string;
   visibility: string;
   category: string;
-  uploader: string;
   uploadTime: string;
   fileUrl?: string;
+  originalFileName: string;
+  uploader: {
+    name: string;
+  };
+  createdAt: string;
 };
 
 export const columns: ColumnDef<Resource>[] = [
@@ -44,33 +50,64 @@ export const columns: ColumnDef<Resource>[] = [
     cell: ({ row }) => (
       <div className="flex items-center gap-2">
         <Image src="/icons/pdf.svg" alt="pdf" width={32} height={32} />
-        <span>{row.original.fileName}</span>
+        <div className="flex flex-col">
+          <span className="text-black-100 text-sm font-medium">
+            {row.original.originalFileName}
+          </span>
+          <span className="text-black-60 text-xs font-medium">
+            {row.original.title}
+          </span>
+        </div>
       </div>
     ),
   },
   {
     accessorKey: "visibility",
     header: "Visibility",
+    cell: ({ row }) => (
+      <span className="capitalize">{row.original.visibility}</span>
+    ),
   },
   {
     accessorKey: "category",
     header: "Category",
+    cell: ({ row }) => (
+      <span className="capitalize">{row.original.category}</span>
+    ),
   },
   {
     accessorKey: "uploader",
     header: "Uploader",
+    cell: ({ row }) => (
+      <div className="flex items-center gap-2">
+        <Image src="/icons/user.svg" alt="user" width={16} height={16} />
+        <span>{row.original.uploader.name}</span>
+      </div>
+    ),
   },
   {
     accessorKey: "uploadTime",
     header: "Upload Time",
-    cell: ({ row }) => (
-      <div className="flex items-center gap-2">
-        <Image src="/icons/date.svg" alt="date" width={16} height={16} />
-        <span className="text-black-100 text-sm font-medium">
-          {row.original.uploadTime}
-        </span>
-      </div>
-    ),
+    cell: ({ row }) => {
+      const date = new Date(row.original.createdAt);
+      const formattedDate = date.toLocaleString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+      });
+
+      return (
+        <div className="flex items-center gap-2">
+          <Image src="/icons/date.svg" alt="date" width={16} height={16} />
+          <span className="text-black-100 text-sm font-medium">
+            {formattedDate}
+          </span>
+        </div>
+      );
+    },
   },
   {
     id: "actions",

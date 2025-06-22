@@ -1,8 +1,21 @@
 import React from "react";
 import EventsTable from "./components/EventsTable";
-import Link from "next/link";
-import Image from "next/image";
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
 
-export default function page() {
-  return <EventsTable />;
+export default async function page() {
+  const session = await auth();
+
+  if (!session) {
+    redirect("/auth/login");
+  }
+
+  return (
+    <section className="flex h-full flex-col bg-white p-7">
+      <h1 className="mb-4 text-lg font-bold">Events</h1>
+      <div className="min-h-0 flex-1">
+        <EventsTable session={session} baseUrl={process.env.BASE_URL || ""} />
+      </div>
+    </section>
+  );
 }

@@ -1,10 +1,18 @@
 import Image from "next/image";
 import React from "react";
-import ModelRetraining from "@/components/forms/ModelRetraining";
+import ModelRetraining from "@/app/(main pages)/ai/components/ModelRetraining";
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
 
-export default function page() {
+export default async function page() {
+  const session = await auth();
+
+  if (!session) {
+    redirect("/auth/login");
+  }
+
   return (
-    <section className="flex flex-col gap-7 bg-white p-7">
+    <section className="flex h-full flex-col bg-white p-7">
       <Image
         src="/pics/ai-panner.svg"
         alt="ai panner"
@@ -12,7 +20,13 @@ export default function page() {
         height={100}
         className="w-full"
       />
-      <ModelRetraining />
+      <div className="min-h-0 flex-1">
+        <ModelRetraining
+          session={session}
+          baseUrl={process.env.BASE_URL || ""}
+          modelApiKey={process.env.MODEL_API_KEY || ""}
+        />
+      </div>
     </section>
   );
 }

@@ -5,18 +5,31 @@ interface ActionBarProps {
   selectedCount: number;
   onSearch: (query: string) => void;
   onDelete: () => void;
+  onSort?: (sortOrder: string) => void;
+  sortOrder?: string;
 }
 
 export function ActionBar({
   selectedCount,
   onSearch,
   onDelete,
+  onSort,
+  sortOrder = "asc",
 }: ActionBarProps) {
+  const handleSort = () => {
+    if (onSort) {
+      onSort(sortOrder === "asc" ? "desc" : "asc");
+    }
+  };
+
   return (
     <div className="bg-primary-light flex w-full items-center justify-between rounded-[8px] p-2">
       <div className="flex items-center gap-4">
-        <TooltipWrapper content="A - Z">
-          <div className="bg-black-5 cursor-pointer rounded-[8px] p-1">
+        <TooltipWrapper content={sortOrder === "asc" ? "ASC" : "DESC"}>
+          <div
+            className="bg-black-5 cursor-pointer rounded-[8px] p-1"
+            onClick={handleSort}
+          >
             <Image
               src="/icons/sorting.svg"
               alt="sorting"

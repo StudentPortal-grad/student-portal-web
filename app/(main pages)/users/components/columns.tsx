@@ -11,7 +11,7 @@ export type User = {
   name: string;
   email: string;
   role: string;
-  registrationDate: string;
+  createdAt: string;
   avatarUrl?: string;
 };
 
@@ -70,33 +70,31 @@ export const columns: ColumnDef<User>[] = [
     header: "Role",
   },
   {
-    accessorKey: "registrationDate",
+    accessorKey: "createdAt",
     header: "Registration Date",
-    cell: ({ row }) => (
-      <div className="flex items-center gap-2">
-        <Image src="/icons/date.svg" alt="date" width={16} height={16} />
-        <span className="text-black-100 text-sm font-medium">
-          {row.original.registrationDate}
-        </span>
-      </div>
-    ),
+    cell: ({ row }) => {
+      const date = new Date(row.original.createdAt);
+      const formattedDate = date.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      });
+
+      return (
+        <div className="flex items-center gap-2">
+          <Image src="/icons/date.svg" alt="date" width={16} height={16} />
+          <span className="text-black-100 text-sm font-medium">
+            {formattedDate}
+          </span>
+        </div>
+      );
+    },
   },
   {
     id: "actions",
     header: "Actions",
     cell: ({ row }) => (
       <div className="flex gap-5">
-        <TooltipWrapper content="View">
-          <Link href={`/users/view/${row.original.id}`}>
-            <Image
-              src="/icons/view.svg"
-              alt="view"
-              width={16}
-              height={16}
-              className="cursor-pointer"
-            />
-          </Link>
-        </TooltipWrapper>
         <TooltipWrapper content="Edit">
           <Link href={`/users/edit/${row.original.id}`}>
             <Image

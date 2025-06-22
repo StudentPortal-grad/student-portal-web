@@ -16,7 +16,7 @@ export default function Credentials({
     );
   }
   return (
-    <p className="text-black-40 mb-10 text-center text-sm">
+    <p className="text-black-40 mt-5 mb-10 text-center text-sm">
       © 2025 Student Portal
     </p>
   );

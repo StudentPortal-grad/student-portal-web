@@ -5,15 +5,41 @@ import TooltipWrapper from "@/components/TooltipWrapper";
 import Link from "next/link";
 
 export type Event = {
-  id: string;
+  _id: string;
   title: string;
+  description: string;
+  startDate: string;
+  endDate: string;
   location: string;
-  date: string;
-  time: string;
-  status: string;
+  eventImage: string;
   visibility: string;
-  rsvp: string;
-  avatarUrl?: string;
+  attendees: any[];
+  creatorId: {
+    _id: string;
+    name: string;
+    profilePicture: string;
+    followersCount: number;
+    followingCount: number;
+    id: string;
+  };
+  status: string;
+  recommendations: any[];
+  createdAt: string;
+  updatedAt: string;
+  rsvps: Array<{
+    userId: {
+      _id: string;
+      name: string;
+      profilePicture: string;
+      followersCount: number;
+      followingCount: number;
+      id: string;
+    };
+    status: string;
+    updatedAt: string;
+    _id: string;
+  }>;
+  __v: number;
 };
 
 export const columns: ColumnDef<Event>[] = [
@@ -45,11 +71,11 @@ export const columns: ColumnDef<Event>[] = [
     accessorKey: "title",
     header: "Title",
     cell: ({ row }) => {
-      const avatarUrl = row.original.avatarUrl;
+      const eventImage = row.original.eventImage;
       return (
         <div className="flex items-center gap-2">
           <Avatar className="h-8 w-8">
-            <AvatarImage src={avatarUrl} alt={row.original.title} />
+            <AvatarImage src={eventImage} alt={row.original.title} />
             <AvatarFallback>{row.original.title[0]}</AvatarFallback>
           </Avatar>
           <div className="flex flex-col">
@@ -65,16 +91,35 @@ export const columns: ColumnDef<Event>[] = [
     },
   },
   {
-    accessorKey: "date",
+    accessorKey: "startDate",
     header: "Date/Time",
-    cell: ({ row }) => (
-      <div className="flex items-center gap-2">
-        <Image src="/icons/date.svg" alt="date" width={16} height={16} />
-        <span className="text-black-100 text-sm font-medium">
-          {row.original.date} <br /> {row.original.time}
-        </span>
-      </div>
-    ),
+    cell: ({ row }) => {
+      const startDate = new Date(row.original.startDate);
+      const endDate = new Date(row.original.endDate);
+      const formattedStartDate = startDate.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      });
+      const formattedStartTime = startDate.toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+      const formattedEndTime = endDate.toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+
+      return (
+        <div className="flex items-center gap-2">
+          <Image src="/icons/date.svg" alt="date" width={16} height={16} />
+          <span className="text-black-100 text-sm font-medium">
+            {formattedStartDate} <br /> {formattedStartTime} -{" "}
+            {formattedEndTime}
+          </span>
+        </div>
+      );
+    },
   },
   {
     accessorKey: "status",
@@ -85,8 +130,16 @@ export const columns: ColumnDef<Event>[] = [
     header: "Visibility",
   },
   {
-    accessorKey: "rsvp",
+    accessorKey: "rsvps",
     header: "RSVP Status",
+    cell: ({ row }) => (
+      <div className="flex items-center gap-2">
+        <span className="text-black-100 text-sm font-medium">
+          {row.original.rsvps.length}
+        </span>
+        <Image src="/icons/users.svg" alt="rsvp" width={16} height={16} />
+      </div>
+    ),
   },
   {
     id: "actions",
@@ -94,7 +147,7 @@ export const columns: ColumnDef<Event>[] = [
     cell: ({ row }) => (
       <div className="flex gap-5">
         <TooltipWrapper content="Edit">
-          <Link href={`/events/edit/${row.original.id}`}>
+          <Link href={`/events/edit/${row.original._id}`}>
             <Image
               src="/icons/edit.svg"
               alt="edit"
@@ -105,7 +158,7 @@ export const columns: ColumnDef<Event>[] = [
           </Link>
         </TooltipWrapper>
         <TooltipWrapper content="Delete">
-          <Link href={`/events/delete/${row.original.id}`}>
+          <Link href={`/events/delete/${row.original._id}`}>
             <Image
               src="/icons/delete.svg"
               alt="delete"

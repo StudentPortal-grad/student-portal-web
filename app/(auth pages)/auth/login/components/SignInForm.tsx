@@ -62,11 +62,11 @@ export default function SignInForm() {
         {loginError && <ErrorMessage message={loginError} />}
 
         <div className="flex w-full items-center gap-3 opacity-50 sm:flex-row sm:gap-4">
-          <TooltipWrapper content="Coming Soon" direction="top">
-            <AuthProviderButton provider="google" disabled={isLoading} />
+          <TooltipWrapper content="Coming Soon" direction="top" disabled>
+            <AuthProviderButton provider="google" />
           </TooltipWrapper>
-          <TooltipWrapper content="Coming Soon" direction="top">
-            <AuthProviderButton provider="microsoft" disabled={isLoading} />
+          <TooltipWrapper content="Coming Soon" direction="top" disabled>
+            <AuthProviderButton provider="microsoft" />
           </TooltipWrapper>
         </div>
         <FormSeparator />
@@ -139,19 +139,9 @@ function FormHeader() {
   );
 }
 
-function AuthProviderButton({
-  provider,
-  disabled,
-}: {
-  provider: string;
-  disabled?: boolean;
-}) {
+function AuthProviderButton({ provider }: { provider: string }) {
   return (
-    <button
-      type="button"
-      disabled={disabled}
-      className="bg-white-100 border-black-10 flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-[8px] border-[1px] px-3 py-1.5 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto sm:py-[6px]"
-    >
+    <div className="bg-white-100 border-black-10 flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-[8px] border-[1px] px-3 py-1.5 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto sm:py-[6px]">
       <Image
         src={`/icons/${provider}.svg`}
         alt={provider}
@@ -162,7 +152,7 @@ function AuthProviderButton({
       <p className="text-black-100 hidden text-xs font-normal whitespace-nowrap capitalize sm:block sm:text-sm">
         sign in with {provider}
       </p>
-    </button>
+    </div>
   );
 }
 

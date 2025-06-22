@@ -14,8 +14,6 @@ import {
   getCoreRowModel,
   flexRender,
   ColumnDef,
-  getPaginationRowModel,
-  getFilteredRowModel,
   getSortedRowModel,
   RowSelectionState,
   OnChangeFn,
@@ -27,9 +25,10 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
   rowSelection?: RowSelectionState;
   onRowSelectionChange?: OnChangeFn<RowSelectionState>;
-  globalFilter?: string;
   onPageChange?: (page: number) => void;
   numPages: number;
+  currentPage?: number;
+  getRowId?: (row: TData, index: number) => string;
 }
 
 export function DataTable<TData, TValue>({
@@ -37,46 +36,28 @@ export function DataTable<TData, TValue>({
   data,
   rowSelection = {},
   onRowSelectionChange,
-  globalFilter = "",
   onPageChange,
   numPages,
+  currentPage = 1,
+  getRowId,
 }: DataTableProps<TData, TValue>) {
-  const [pageSize] = React.useState(10);
-  const [pageIndex, setPageIndex] = React.useState(0);
-
   const table = useReactTable({
     data,
     columns,
     state: {
       rowSelection,
-      globalFilter,
-      pagination: {
-        pageIndex,
-        pageSize,
-      },
     },
     onRowSelectionChange,
-    onPaginationChange: (updater) => {
-      if (typeof updater === "function") {
-        const newState = updater({
-          pageIndex,
-          pageSize,
-        });
-        setPageIndex(newState.pageIndex);
-        onPageChange?.(newState.pageIndex + 1);
-      } else {
-        setPageIndex(updater.pageIndex);
-        onPageChange?.(updater.pageIndex + 1);
-      }
-    },
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
     enableRowSelection: true,
+    // Disable client-side pagination
+    manualPagination: true,
     pageCount: numPages,
     // Disable automatic page reset on selection
     autoResetPageIndex: false,
+    // Use row ID for selection instead of index
+    getRowId: getRowId || ((row, index) => index.toString()),
   });
 
   return (
@@ -128,8 +109,8 @@ export function DataTable<TData, TValue>({
       <div className="mt-2 flex items-center justify-end gap-1 px-6 py-3">
         <button
           className="hover:bg-black-5 flex h-6 w-6 items-center justify-center rounded-full disabled:opacity-50"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
+          onClick={() => onPageChange?.(currentPage - 1)}
+          disabled={currentPage <= 1}
           aria-label="Previous page"
           style={{ fontSize: "0.85rem" }}
         >
@@ -138,30 +119,76 @@ export function DataTable<TData, TValue>({
             style={{ color: "var(--color-black-40)" }}
           />
         </button>
-        {Array.from({ length: table.getPageCount() }, (_, i) => {
-          const isCurrent = table.getState().pagination.pageIndex === i;
-          return (
-            <button
-              key={i}
-              className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-medium transition select-none ${isCurrent ? "" : "hover:bg-black-5"} cursor-pointer`}
-              onClick={() => table.setPageIndex(i)}
-              aria-current={isCurrent ? "page" : undefined}
-              style={{
-                color: isCurrent
-                  ? "var(--color-black-100)"
-                  : "var(--color-black-40)",
-                background: "transparent",
-                fontWeight: isCurrent ? 700 : 500,
-              }}
-            >
-              {i + 1}
-            </button>
-          );
-        })}
+
+        {(() => {
+          const pages = [];
+          const maxVisiblePages = 7;
+
+          if (numPages <= maxVisiblePages) {
+            for (let i = 1; i <= numPages; i++) {
+              pages.push(i);
+            }
+          } else {
+            if (currentPage <= 4) {
+              for (let i = 1; i <= 5; i++) {
+                pages.push(i);
+              }
+              pages.push("...");
+              pages.push(numPages);
+            } else if (currentPage >= numPages - 3) {
+              pages.push(1);
+              pages.push("...");
+              for (let i = numPages - 4; i <= numPages; i++) {
+                pages.push(i);
+              }
+            } else {
+              pages.push(1);
+              pages.push("...");
+              for (let i = currentPage - 2; i <= currentPage + 2; i++) {
+                pages.push(i);
+              }
+              pages.push("...");
+              pages.push(numPages);
+            }
+          }
+
+          return pages.map((page, index) => {
+            if (page === "...") {
+              return (
+                <span
+                  key={`ellipsis-${index}`}
+                  className="flex h-6 w-6 items-center justify-center text-xs text-gray-500"
+                >
+                  ...
+                </span>
+              );
+            }
+
+            const isCurrent = currentPage === page;
+            return (
+              <button
+                key={page}
+                className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-medium transition select-none ${isCurrent ? "" : "hover:bg-black-5"} cursor-pointer`}
+                onClick={() => onPageChange?.(page as number)}
+                aria-current={isCurrent ? "page" : undefined}
+                style={{
+                  color: isCurrent
+                    ? "var(--color-black-100)"
+                    : "var(--color-black-40)",
+                  background: "transparent",
+                  fontWeight: isCurrent ? 700 : 500,
+                }}
+              >
+                {page}
+              </button>
+            );
+          });
+        })()}
+
         <button
           className="hover:bg-black-5 flex h-6 w-6 items-center justify-center rounded-full disabled:opacity-50"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
+          onClick={() => onPageChange?.(currentPage + 1)}
+          disabled={currentPage >= numPages}
           aria-label="Next page"
           style={{ fontSize: "0.85rem" }}
         >
