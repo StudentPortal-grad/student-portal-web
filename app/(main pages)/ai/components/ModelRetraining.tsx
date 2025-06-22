@@ -46,12 +46,12 @@ export default function ModelRetraining({
     const file = e.target.files?.[0] || null;
     console.log("Selected file:", file);
     setSelectedFile(file);
-    setMessage(null); // Clear any previous messages
+    setMessage(null);
   };
 
   const handleRemoveFile = () => {
     setSelectedFile(null);
-    setMessage(null); // Clear any previous messages
+    setMessage(null);
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
