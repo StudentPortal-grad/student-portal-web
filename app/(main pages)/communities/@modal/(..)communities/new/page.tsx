@@ -1,13 +1,14 @@
-"use client";
 import React from "react";
-import { useRouter } from "next/navigation";
 import CommunityForm from "../../../components/CommunityForm";
+import { auth } from "@/auth";
 
-export default function NewCommunityModal() {
-  const router = useRouter();
+export default async function NewCommunityModal() {
+  const baseUrl = process.env.BASE_URL || "";
+  const session = await auth();
+
   return (
     <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
-      <CommunityForm mode="new" onCancel={() => router.back()} />
+      <CommunityForm mode="new" baseUrl={baseUrl} session={session} />
     </div>
   );
 }

@@ -1,32 +1,67 @@
-"use client";
 import React from "react";
-import { useRouter } from "next/navigation";
 import EventForm, { EventFormData } from "../../components/EventForm";
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
 
-const mockEvent: EventFormData = {
-  title: "Graduation Ceremony 2025",
-  description: "A special event for all graduates.",
-  tags: ["graduation", "2025", "ceremony"],
-  category: "Documents",
-  visibility: "Public",
-  file: null,
-  date: "2025-06-22",
-  time: "10:00",
-  location: "University of Colombo",
-};
+async function getEventData(
+  eventId: string,
+  token: string,
+  baseUrl: string,
+): Promise<EventFormData | null> {
+  try {
+    const response = await fetch(`${baseUrl}/events/${eventId}`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
-export default function EditEventModal() {
-  const router = useRouter();
+    const data = await response.json();
+
+    if (data.success) {
+      const eventData = data.data;
+      const startDate = new Date(eventData.startDate);
+      return {
+        title: eventData.title || "",
+        description: eventData.description || "",
+        date: startDate.toISOString().split("T")[0],
+        time: startDate.toTimeString().slice(0, 5),
+        location: eventData.location || "",
+        visibility: eventData.visibility || "Public",
+        capacity: eventData.capacity?.toString() || "",
+        category: eventData.category || "",
+        tags: eventData.tags || [],
+      };
+    }
+    return null;
+  } catch (error) {
+    console.error("Error fetching event data:", error);
+    return null;
+  }
+}
+
+export default async function EditEventModal({
+  params,
+}: {
+  params: { eventId: string };
+}) {
+  const session = await auth();
+  const baseUrl = process.env.BASE_URL || "";
+
+  if (!session || !session.token) {
+    redirect("/api/auth/logout");
+  }
+
+  const event = await getEventData(params.eventId, session.token, baseUrl);
+
   return (
     <section className="flex items-start justify-center bg-white p-7">
       <EventForm
         mode="edit"
-        event={mockEvent}
-        onSave={(data: EventFormData) => {
-          console.log("Saved event:", data);
-          router.back();
-        }}
-        onCancel={() => router.back()}
+        eventId={params.eventId}
+        session={session}
+        baseUrl={baseUrl}
+        event={event || undefined}
       />
     </section>
   );

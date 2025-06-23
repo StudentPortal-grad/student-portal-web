@@ -1,19 +1,21 @@
-"use client";
 import React from "react";
-import { useRouter } from "next/navigation";
 import EventForm, { EventFormData } from "../../../components/EventForm";
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
 
-export default function NewEventModal() {
-  const router = useRouter();
+export default async function NewEventModal() {
+  const session = await auth();
+
+  if (!session) {
+    redirect("/api/auth/logout");
+  }
+
   return (
     <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
       <EventForm
         mode="new"
-        onSave={(data: EventFormData) => {
-          console.log("Created event:", data);
-          router.back();
-        }}
-        onCancel={() => router.back()}
+        session={session}
+        baseUrl={process.env.BASE_URL || ""}
       />
     </div>
   );

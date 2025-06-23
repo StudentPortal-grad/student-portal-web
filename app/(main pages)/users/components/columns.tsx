@@ -95,6 +95,17 @@ export const columns: ColumnDef<User>[] = [
     header: "Actions",
     cell: ({ row }) => (
       <div className="flex gap-5">
+        <TooltipWrapper content="View">
+          <Link href={`/users/view/${row.original.id}`}>
+            <Image
+              src="/icons/view.svg"
+              alt="view"
+              width={16}
+              height={16}
+              className="cursor-pointer"
+            />
+          </Link>
+        </TooltipWrapper>
         <TooltipWrapper content="Edit">
           <Link href={`/users/edit/${row.original.id}`}>
             <Image

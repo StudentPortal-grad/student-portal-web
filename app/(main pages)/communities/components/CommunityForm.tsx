@@ -1,6 +1,8 @@
 "use client";
 import React, { useState, useRef } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { Session } from "next-auth";
 
 export type CommunityFormMode = "new" | "edit";
 export type CommunityFormData = {
@@ -13,27 +15,26 @@ export type CommunityFormData = {
 
 interface CommunityFormProps {
   mode: CommunityFormMode;
-  community?: CommunityFormData;
-  onSave?: (data: CommunityFormData) => void;
-  onCancel: () => void;
+  baseUrl: string;
+  session: Session | null;
 }
 
 export default function CommunityForm({
   mode,
-  community,
-  onSave,
-  onCancel,
+  baseUrl,
+  session,
 }: CommunityFormProps) {
-  const [form, setForm] = useState<CommunityFormData>(
-    community || {
-      name: "",
-      description: "",
-      type: "Official",
-      visibility: "Public",
-      icon: null,
-    },
-  );
+  const router = useRouter();
+  const [form, setForm] = useState<CommunityFormData>({
+    name: "",
+    description: "",
+    type: "Official",
+    visibility: "Public",
+    icon: null,
+  });
   const [iconPreview, setIconPreview] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleChange = (
@@ -43,6 +44,8 @@ export default function CommunityForm({
   ) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
+
+    if (error) setError(null);
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -72,9 +75,70 @@ export default function CommunityForm({
     e.preventDefault();
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (onSave) onSave(form);
+    setError(null);
+
+    if (!form.name.trim()) {
+      setError("Community name is required");
+      return;
+    }
+
+    if (!form.description.trim()) {
+      setError("Description is required");
+      return;
+    }
+
+    if (mode === "new") {
+      await handleCreateCommunity();
+    }
+  };
+
+  const handleCreateCommunity = async () => {
+    if (!session?.token) {
+      setError("Authentication required");
+      return;
+    }
+
+    setIsSubmitting(true);
+    setError(null);
+
+    try {
+      const data = new FormData();
+      data.append("name", form.name.trim());
+      data.append("description", form.description.trim());
+      data.append("type", form.type);
+      data.append("visibility", form.visibility);
+
+      if (form.icon) {
+        data.append("icon", form.icon);
+      }
+
+      const response = await fetch(`${baseUrl}/communities`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${session.token}`,
+        },
+        body: data,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(
+          errorData.message ||
+            `Error: ${response.status} ${response.statusText}`,
+        );
+      }
+
+      const result = await response.json();
+
+      router.push("/communities?refetch=true");
+    } catch (err: any) {
+      setError(err.message || "Failed to create community. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -85,6 +149,13 @@ export default function CommunityForm({
       <h2 className="mb-4 text-center text-lg font-medium">
         {mode === "edit" ? "Edit Community" : "Create Community"}
       </h2>
+
+      {error && (
+        <div className="mb-4 rounded-md bg-red-50 p-3 text-sm text-red-600">
+          {error}
+        </div>
+      )}
+
       <div className="mb-6 flex items-center gap-4">
         <label
           className="flex h-20 w-20 cursor-pointer items-center justify-center overflow-hidden rounded-full border-2 border-dashed border-gray-200 bg-gray-50"
@@ -137,6 +208,7 @@ export default function CommunityForm({
           onChange={handleChange}
           placeholder="Enter Community Name"
           className="w-full rounded-md border bg-white px-4 py-3 text-base disabled:bg-gray-50"
+          disabled={isSubmitting}
         />
       </div>
       <div className="mb-4">
@@ -145,9 +217,10 @@ export default function CommunityForm({
           name="description"
           value={form.description}
           onChange={handleChange}
-          placeholder="Enter event description"
+          placeholder="Enter community description"
           className="w-full rounded-md border bg-white px-4 py-3 text-base disabled:bg-gray-50"
           rows={3}
+          disabled={isSubmitting}
         />
       </div>
       <div className="mb-4 flex gap-4">
@@ -158,6 +231,7 @@ export default function CommunityForm({
             value={form.type}
             onChange={handleChange}
             className="w-full rounded-md border bg-white px-4 py-3 text-base disabled:bg-gray-50"
+            disabled={isSubmitting}
           >
             <option value="Official">Official</option>
             <option value="Unofficial">Unofficial</option>
@@ -170,6 +244,7 @@ export default function CommunityForm({
             value={form.visibility}
             onChange={handleChange}
             className="w-full rounded-md border bg-white px-4 py-3 text-base disabled:bg-gray-50"
+            disabled={isSubmitting}
           >
             <option value="Public">Public</option>
             <option value="Private">Private</option>
@@ -179,16 +254,24 @@ export default function CommunityForm({
       <div className="mt-8 flex justify-end gap-3">
         <button
           type="button"
-          onClick={onCancel}
-          className="rounded-md bg-gray-100 px-6 py-2 text-base font-medium text-gray-800 hover:bg-gray-200"
+          onClick={() => router.back()}
+          className="rounded-md bg-gray-100 px-6 py-2 text-base font-medium text-gray-800 hover:bg-gray-200 disabled:opacity-50"
+          disabled={isSubmitting}
         >
           Cancel
         </button>
         <button
           type="submit"
-          className="rounded-md bg-black px-6 py-2 text-base font-medium text-white hover:bg-gray-900"
+          className="rounded-md bg-black px-6 py-2 text-base font-medium text-white hover:bg-gray-900 disabled:opacity-50"
+          disabled={isSubmitting}
         >
-          {mode === "edit" ? "Save" : "Create Community"}
+          {isSubmitting
+            ? mode === "edit"
+              ? "Saving..."
+              : "Creating..."
+            : mode === "edit"
+              ? "Save"
+              : "Create Community"}
         </button>
       </div>
     </form>

@@ -1,6 +1,8 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
+import { Session } from "next-auth";
+import { useRouter } from "next/navigation";
 
 export type EventFormMode = "new" | "edit";
 export type EventFormData = {
@@ -18,16 +20,18 @@ export type EventFormData = {
 
 interface EventFormProps {
   mode: EventFormMode;
+  eventId?: string;
+  session?: Session | null;
+  baseUrl?: string;
   event?: EventFormData;
-  onSave?: (data: EventFormData) => void;
-  onCancel: () => void;
 }
 
 export default function EventForm({
   mode,
+  eventId,
+  session,
+  baseUrl,
   event,
-  onSave,
-  onCancel,
 }: EventFormProps) {
   const [form, setForm] = useState<EventFormData>(
     event || {
@@ -43,6 +47,14 @@ export default function EventForm({
   );
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const [uploading, setUploading] = useState(false);
+
+  const router = useRouter();
+
+  useEffect(() => {
+    if (event) {
+      setForm(event);
+    }
+  }, [event]);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -95,7 +107,6 @@ export default function EventForm({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (onSave) onSave(form);
   };
 
   return (
@@ -224,7 +235,7 @@ export default function EventForm({
       <div className="mt-8 flex justify-end gap-3">
         <button
           type="button"
-          onClick={onCancel}
+          onClick={() => router.back()}
           className="rounded-md bg-gray-100 px-6 py-2 text-base font-medium text-gray-800 hover:bg-gray-200"
         >
           Cancel

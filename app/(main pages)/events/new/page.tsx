@@ -1,19 +1,21 @@
-"use client";
 import React from "react";
-import { useRouter } from "next/navigation";
 import EventForm, { EventFormData } from "../components/EventForm";
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
 
-export default function NewEventModal() {
-  const router = useRouter();
+export default async function NewEventPage() {
+  const session = await auth();
+
+  if (!session) {
+    redirect("/api/auth/logout");
+  }
+
   return (
     <section className="flex items-start justify-center bg-white p-7">
       <EventForm
         mode="new"
-        onSave={(data: EventFormData) => {
-          console.log("Created event:", data);
-          router.back();
-        }}
-        onCancel={() => router.back()}
+        session={session}
+        baseUrl={process.env.BASE_URL || ""}
       />
     </section>
   );
